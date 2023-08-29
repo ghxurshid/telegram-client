@@ -1,16 +1,14 @@
 #pragma once
 #include "ByteArray.h"
 #include "TcpMessage.h"
+ 
+void Connect();
 
-namespace TcpTransport
-{
-	void Connect();
+void Disconnect();
 
-	void Disconnect();
+unsigned long AvailableBytes();
 
-	unsigned long AvailableBytes();
+void TcpSend(ByteArray data);
 
-	void Send(ByteArray data);
-
-	TcpMessage Receive();
-}
+TcpMessage TcpReceive();
+ 

@@ -11,7 +11,6 @@
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
-
   
 WSADATA wsaData;
 SOCKET  sock;
@@ -54,11 +53,6 @@ void Connect()
     else
         printf("Client: socket() is OK!\n");
 
-    // Set up a SOCKADDR_IN structure that will be used to connect
-    // to a listening server on port 5150. For demonstration
-    // purposes, let's assume our server's IP address is 127.0.0.1 or localhost
-    // IPv4
-
     ServerAddr.sin_family = AF_INET;
 
     // Port no.
@@ -88,10 +82,6 @@ void Connect()
         printf("Client: connect() is OK, got connected...\n");
         printf("Client: Ready for sending and/or receiving data...\n");
     }
-
-    // At this point you can start sending or receiving data on
-    // the socket SendingSocket.
-    // Some info on the receiver side...
 
     getsockname(sock, (SOCKADDR*)&ServerAddr, (int*)sizeof(ServerAddr));
     printf("Client: Receiver IP(s) used: %s\n", inet_ntoa(ServerAddr.sin_addr));
