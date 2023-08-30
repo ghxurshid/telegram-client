@@ -16,7 +16,7 @@ Session* FromBytes(ByteArray buffer)
 void Save()
 {
     FILE* file = fopen("session.dat", "wb");
-    freopen("session.dat", "rw");
+     
 }
 
 Session* TryLoadOrCreateNew()
