@@ -1,15 +1,14 @@
 #include "TelegramClient.h"
-#include "Step3_Response.h"
-#include "Authenticator.h"
-#include "TLRequestGetConfig.h"
-
+ 
 TelegramClient* CreateTelegramClient(int apiId, char* apiHash)
 {     
     TelegramClient* client = new TelegramClient();
     
     client->apiId = apiId;
     client->apiHash = apiHash;
-    client->session = TryLoadOrCreateNew(); 
+    client->session = TryLoadOrCreateNew();
+
+    return client;
 }
 
 bool Connect(TelegramClient* client, bool reconnect = false)
@@ -18,13 +17,10 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 
 	if (session->AuthKey == nullptr || reconnect)
 	{
-		Step3_Response result = DoAuthentication();
-		session->AuthKey = result.AuthKey;
-		session->TimeOffset = result.TimeOffset;
+		 DoAuthentication();		 
 	}
-
 	 
-    TLRequestGetConfig* config = new TLRequestGetConfig();
+    /*TLRequestGetConfig* config = new TLRequestGetConfig();
     TLRequestInitConnection request = new TLRequestInitConnection
     {
         ApiId = apiId,
@@ -40,29 +36,42 @@ bool Connect(TelegramClient* client, bool reconnect = false)
         Query = request
     };
     await sender.Send(invokewithLayer, token).ConfigureAwait(continueOnCapturedContext: false);
-    await sender.Receive(invokewithLayer, token).ConfigureAwait(continueOnCapturedContext: false);
-    dcOptions = ((TLConfig)invokewithLayer.Response).DcOptions.ToList();
-	
+    await sender.Receive(invokewithLayer, token).ConfigureAwait(continueOnCapturedContext: false);*/
+    //dcOptions = ((TLConfig)invokewithLayer.Response).DcOptions.ToList();
+
+    return true;
 }
 
 void DoAuthentication()
 {
 
 }
-void SendCodeRequest(TelegramClient* client, char phoneNumber[12])
-{
 
+char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])
+{
+    return new char[1];//TODO
 }
 
-void MakeAuth(TelegramClient* client, char phoneNumber[12], char* hash, char* code)
+TLUser* MakeAuth(TelegramClient* client, char phoneNumber[12], char* hash, char* code)
 {
-
+    return new TLUser();
 }
-void GetContacts(TelegramClient* client)
+
+TLContacts GetContacts(TelegramClient* client)
 {
-
+    return CreateContacts(5);
 }
+
 void ReadFromChat(TelegramClient* client)
 {
 
+}
+
+bool IsUserAuthorized(TelegramClient* client)
+{
+    if (client == nullptr || 
+        client->session == nullptr ||
+        client->session->TLUser == nullptr) return false;
+     
+    return true;
 }

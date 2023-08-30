@@ -9,7 +9,7 @@ ByteArray CreateByteArray(unsigned int size)
 	return byteArray;
 }
 
-void DeleteByteArray(ByteArray obj)
+void DeleteByteArray(ByteArray& obj)
 {
 	delete[] obj.data;
 	obj.size = 0;

@@ -1,13 +1,13 @@
 #include "MtProtoSender.h"
 
-void Send(ByteArray packet)
+void Mt_Send(ByteArray packet)
 {
 
 }
 
-ByteArray Receive()
+ByteArray Mt_Receive()
 {
-
+	return CreateByteArray(5);
 }
 
 

@@ -32,7 +32,7 @@ Session* FromBytes(ByteArray buffer);
 void Save();
 Session* TryLoadOrCreateNew();
 unsigned long GenerateRandomUlong();
-long GetNewMessageId();
+ 
 
 
 

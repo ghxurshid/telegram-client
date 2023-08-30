@@ -6,7 +6,7 @@ struct ByteArray
 };
 
 ByteArray CreateByteArray(unsigned int size);
-void DeleteByteArray(ByteArray obj);
+void DeleteByteArray(ByteArray& obj);
 
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2);
 

@@ -2,9 +2,9 @@
 #include "ByteArray.h"
 #include "TcpMessage.h"
  
-void Connect();
+void TcpConnect();
 
-void Disconnect();
+void TcpDisconnect();
 
 unsigned long AvailableBytes();
 

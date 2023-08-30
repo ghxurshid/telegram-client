@@ -1,31 +1,30 @@
+#include <iostream>
+#include <stdio.h>
+
 #include "Session.h"
  
 ByteArray ToBytes(Session* session)
 {
-     
+    return CreateByteArray(5);
 }
 
 Session* FromBytes(ByteArray buffer)
 {
-    
+    return nullptr;
 }
 
 void Save()
 {
-     
+    FILE* file = fopen("session.dat", "wb");
+    freopen("session.dat", "rw");
 }
 
 Session* TryLoadOrCreateNew()
 {
-     
+    return nullptr;
 }
 
 unsigned long GenerateRandomUlong()
 {
-     
-}
-
-long GetNewMessageId()
-{
-    
-}
+    return 0;
+} 

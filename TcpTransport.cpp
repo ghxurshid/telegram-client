@@ -1,18 +1,19 @@
+#include <iostream>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+
 #include "TcpTransport.h"
 #include "TcpMessage.h"
 
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-
+ 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
+//#pragma comment (lib, "Ws2_32.lib")
+//#pragma comment (lib, "Mswsock.lib")
+//#pragma comment (lib, "AdvApi32.lib")
+
+#pragma comment(lib, "ws2_32.lib")
   
-WSADATA wsaData;
+WSADATA wsData;
 SOCKET  sock;
 
 // Server/receiver address
@@ -28,12 +29,15 @@ int sendCount = 0;
 char sendbuf[1024] = "This is a test string from sender";
 int BytesSent, nlen;
 
-void Connect()
+void TcpConnect()
 {
     // Initialize Winsock version 2.2
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
+        std::cerr << "Failed to initialize Winsock." << std::endl;
+        return;
+    }
 
-    printf("Client: Winsock DLL status is %s.\n", wsaData.szSystemStatus);
+    printf("Client: Winsock DLL status is %s.\n", wsData.szSystemStatus);
 
     // Create a new socket to make a client connection.
     // AF_INET = 2, The Internet Protocol version 4 (IPv4) address family, TCP protocol
@@ -53,57 +57,33 @@ void Connect()
     else
         printf("Client: socket() is OK!\n");
 
-    ServerAddr.sin_family = AF_INET;
+    // Server information
+    sockaddr_in serverAddr{};
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(12345);  // Server port
+    //serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Server IP address
+    inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);
 
-    // Port no.
-    ServerAddr.sin_port = htons(Port);
-
-    // The IP address
-    ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-    // Make a connection to the server with socket SendingSocket.
-    RetCode = connect(sock, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr));
-
-    if (RetCode != 0)
-    {
-        printf("Client: connect() failed! Error code: %ld\n", WSAGetLastError());
-
-        // Close the socket
+    if (connect(sock, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR) {
+        printf("Failed to connect to the server.");
         closesocket(sock);
-
-        // Do the clean up
         WSACleanup();
-
-        // Exit with error
         return;
     }
-    else
-    {
-        printf("Client: connect() is OK, got connected...\n");
-        printf("Client: Ready for sending and/or receiving data...\n");
-    }
-
-    getsockname(sock, (SOCKADDR*)&ServerAddr, (int*)sizeof(ServerAddr));
-    printf("Client: Receiver IP(s) used: %s\n", inet_ntoa(ServerAddr.sin_addr));
-    printf("Client: Receiver port used: %d\n", htons(ServerAddr.sin_port));
 }
 
-void Disconnect()
+void TcpDisconnect()
 {
     if (shutdown(sock, SD_SEND) != 0)
         printf("Client: Well, there is something wrong with the shutdown(). The error code : % ld\n", WSAGetLastError());
     else
         printf("Client: shutdown() looks OK...\n");
 
-    // When you are finished sending and receiving data on socket SendingSocket,
-    // you should close the socket using the closesocket API. We will
-    // describe socket closure later in the chapter.
     if (closesocket(sock) != 0)
         printf("Client: Cannot close \"SendingSocket\" socket. Error code: %ld\n", WSAGetLastError());
     else
         printf("Client: Closing \"SendingSocket\" socket...\n");
 
-    // When your application is finished handling the connection, call WSACleanup.
     if (WSACleanup() != 0)
         printf("Client: WSACleanup() failed!...\n");
     else
@@ -117,7 +97,7 @@ unsigned long AvailableBytes()
     return availableBytes;
 }
 
-void Send(ByteArray data)
+void TcpSend(ByteArray data)
 {
     TcpMessage message{ sendCount++, data };
     ByteArray buff = Encode(message);
@@ -128,9 +108,9 @@ void Send(ByteArray data)
     if (BytesSent == SOCKET_ERROR) printf("Client: send() error %ld.\n", WSAGetLastError());
 }
 
-TcpMessage Receive()
+TcpMessage TcpReceive()
 {
-    ByteArray recvData;
+    ByteArray recvData{};
     unsigned int available = 0;
     while ((available = AvailableBytes()) > 0)
     {

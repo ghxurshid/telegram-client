@@ -3,8 +3,8 @@
 
 static Session* session;
 
-void Send(ByteArray packet);
-ByteArray Receive();
+void Mt_Send(ByteArray packet);
+ByteArray Mt_Receive();
 
 
 

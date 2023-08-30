@@ -1,10 +1,10 @@
 #include "MtProtoPlainSender.h"
-
-long GetNewMessageId()
-{
-	return 1;
-}
-
+#include "TcpTransport.h"
+#include "Helper.h"
+ 
+int timeOffset;
+long lastMessageId;
+  
 void MtPlain_Send(ByteArray data)
 {
 	unsigned int lenght = 20 + data.size;
@@ -17,7 +17,7 @@ void MtPlain_Send(ByteArray data)
 	{
 		_data[idx ++] = 0;		 
 	}
-	long id = GetNewMessageId();
+	long id = GetNewMessageId(timeOffset, lastMessageId);
 	for (int i = 0; i < 8; i++)
 	{
 		_data[idx ++] = (id >> (i*8)) & 0xFF;		 
@@ -33,10 +33,11 @@ void MtPlain_Send(ByteArray data)
 		_data[idx++] = data.data[i];
 	}
 
-
+	TcpSend(packet);
 }
 
 ByteArray MtPlain_Receive()
 {
-
+	TcpMessage message = TcpReceive();
+	return message.Body;
 }

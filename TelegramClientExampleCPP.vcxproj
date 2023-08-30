@@ -129,29 +129,29 @@
   <ItemGroup>
     <ClCompile Include="AuthKey.cpp" />
     <ClCompile Include="ByteArray.cpp" />
-    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="MtProtoPlainSender.cpp" />
     <ClCompile Include="MtProtoSender.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="TcpMessage.cpp" />
     <ClCompile Include="TcpTransport.cpp" />
     <ClCompile Include="TelegramClient.cpp" />
-    <ClCompile Include="TelegramClientExampleCPP.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TLContact.cpp" />
     <ClCompile Include="TLUser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuthKey.h" />
     <ClInclude Include="ByteArray.h" />
+    <ClInclude Include="Helper.h" />
     <ClInclude Include="MtProtoPlainSender.h" />
     <ClInclude Include="MtProtoSender.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="TcpMessage.h" />
     <ClInclude Include="TcpTransport.h" />
     <ClInclude Include="TelegramClient.h" />
+    <ClInclude Include="TLContact.h" />
     <ClInclude Include="TLUser.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="TelegramClientExampleCPP.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
