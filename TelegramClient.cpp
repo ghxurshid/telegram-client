@@ -1,6 +1,6 @@
 #include "TelegramClient.h"
  
-TelegramClient* CreateTelegramClient(int apiId, char* apiHash)
+TelegramClient* CreateTelegramClient(uint32_t apiId, char* apiHash)
 {     
     TelegramClient* client = new TelegramClient();
     

@@ -1,10 +1,10 @@
 #include "ByteArray.h"
 
-ByteArray CreateByteArray(unsigned int size)
+ByteArray CreateByteArray(uint16_t size)
 {
 	ByteArray byteArray{};
 	byteArray.size = size;
-	byteArray.data = new unsigned char[size];
+	byteArray.data = new uint8_t[size];
 
 	return byteArray;
 }
@@ -17,19 +17,19 @@ void DeleteByteArray(ByteArray& obj)
 
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2)
 {
-	unsigned int sum = arr1.size + arr2.size;
+	uint16_t sum = arr1.size + arr2.size;
 	ByteArray newArr = CreateByteArray (sum);
 
-	int offset = 0;
+	uint16_t offset = 0;
 
-	for (int i = 0; i < arr1.size; i++)
+	for (uint16_t i = 0; i < arr1.size; i++)
 	{
 		newArr.data[offset + i] = arr1.data[i];
 	}
 
 	offset = arr1.size;
 
-	for (int i = 0; i < arr2.size; i++)
+	for (uint16_t i = 0; i < arr2.size; i++)
 	{
 		newArr.data[offset + i] = arr2.data[i];
 	}

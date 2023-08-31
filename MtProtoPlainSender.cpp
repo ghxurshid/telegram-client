@@ -2,14 +2,15 @@
 #include "TcpTransport.h"
 #include "Helper.h"
  
-int timeOffset;
-long lastMessageId;
+ 
+uint32_t timeOffset;
+uint64_t lastMessageId;
   
 void MtPlain_Send(ByteArray data)
 {
-	unsigned int lenght = 20 + data.size;
+	int lenght = 20 + data.size;
 	ByteArray packet = CreateByteArray(lenght);
-	unsigned char* _data = packet.data;
+	uint8_t* _data = packet.data;
 
 	int idx = 0;
 
@@ -17,7 +18,7 @@ void MtPlain_Send(ByteArray data)
 	{
 		_data[idx ++] = 0;		 
 	}
-	long id = GetNewMessageId(timeOffset, lastMessageId);
+	uint64_t id = GetNewMessageId(timeOffset, lastMessageId);
 	for (int i = 0; i < 8; i++)
 	{
 		_data[idx ++] = (id >> (i*8)) & 0xFF;		 

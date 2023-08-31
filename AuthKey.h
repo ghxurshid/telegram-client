@@ -1,10 +1,12 @@
 #pragma once
+#include <stdint.h> 
+
 struct AuthKey
 {
-    unsigned char* key;
+    uint8_t* key;
 
-    unsigned long keyId;
+    uint64_t keyId;
 
-    unsigned long auxHash;
+    uint64_t auxHash;
 };
 

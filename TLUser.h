@@ -1,7 +1,9 @@
 #pragma once
+#include <stdint.h>
+
 struct TLUser
 {
-    int Flags;
+    uint32_t Flags;
 
     bool Self;
     bool Contact;
@@ -14,8 +16,9 @@ struct TLUser
     bool Restricted;
     bool Min;
     bool BotInlineGeo;
-    int Id;
-    long AccessHash;
+
+    uint32_t Id;
+    uint64_t AccessHash;
 
     char* FirstName;
     char* LastName;
@@ -25,9 +28,11 @@ struct TLUser
     /*TLAbsUserProfilePhoto Photo;
     TLAbsUserStatus Status;*/
 
-    int BotInfoVersion;
+    uint32_t BotInfoVersion;
     char* RestrictionReason;
     char* BotInlinePlaceholder;
     char* LangCode;
 };
+
+void UserWriteBytes(TLUser* user, FILE* fp);
 

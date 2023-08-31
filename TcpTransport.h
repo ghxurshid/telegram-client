@@ -6,7 +6,7 @@ void TcpConnect();
 
 void TcpDisconnect();
 
-unsigned long AvailableBytes();
+uint64_t AvailableBytes();
 
 void TcpSend(ByteArray data);
 

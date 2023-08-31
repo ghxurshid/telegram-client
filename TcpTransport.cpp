@@ -20,14 +20,14 @@ SOCKET  sock;
 SOCKADDR_IN ServerAddr, ThisSenderInfo;
 
 // Server/receiver port to connect to
-unsigned int Port = 7171;
+uint32_t Port = 7171;
 
-int RetCode;
-int sendCount = 0;
+uint32_t RetCode;
+uint32_t sendCount = 0;
 
 // Be careful with the array bound, provide some checking mechanism...
 char sendbuf[1024] = "This is a test string from sender";
-int BytesSent, nlen;
+uint32_t BytesSent, nlen;
 
 void TcpConnect()
 {
@@ -90,7 +90,7 @@ void TcpDisconnect()
         printf("Client: WSACleanup() is OK...\n");
 }
 
-unsigned long AvailableBytes()
+uint64_t AvailableBytes()
 {
     unsigned long availableBytes;
     ioctlsocket(sock, FIONREAD, &availableBytes);
@@ -111,11 +111,11 @@ void TcpSend(ByteArray data)
 TcpMessage TcpReceive()
 {
     ByteArray recvData{};
-    unsigned int available = 0;
+    uint32_t available = 0;
     while ((available = AvailableBytes()) > 0)
     {
         ByteArray buff = CreateByteArray(available);
-        int bytesRead = recv(sock, (char*)buff.data, (int)buff.size, 0);
+        uint32_t bytesRead = recv(sock, (char*)buff.data, (int)buff.size, 0);
         recvData = Add2ByteArray(recvData, buff);
     }
 

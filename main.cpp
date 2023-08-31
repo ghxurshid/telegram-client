@@ -7,11 +7,11 @@
 
 #include "TelegramClient.h"
 
-int main()
+uint32_t main()
 {
-    int apiId = 22236638;
+    uint32_t apiId = 22236638;
     char* apiHash = (char*)"fdf44e15f78621fe8d76caefac19761a";
-
+    printf("uuint64_t size: %i", sizeof(uint64_t));
     // Номер телефона пользователя
     char* phoneNum = (char*)"+998998346521";
 
@@ -32,7 +32,7 @@ int main()
         char* hash = SendCodeRequest(client, phoneNum);
         printf("Введите код из SMS:\n");
         char* code = new char[6];
-        int ret = scanf_s(code);
+        uint32_t ret = scanf_s(code);
 
         // Пытаемся авторизовать пользователя с полученным кодом
         TLUser* user = MakeAuth(client, phoneNum, hash, code);
@@ -49,7 +49,7 @@ int main()
      
     // Получаем список контактов пользователя
     TLContacts contacts = GetContacts(client);
-    int contactCount = contacts.size;
+    uint32_t contactCount = contacts.size;
     printf("У вас %i контактов", contactCount);    
 }
 

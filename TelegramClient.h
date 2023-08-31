@@ -7,11 +7,11 @@
 struct TelegramClient
 {
     char* apiHash;
-    int apiId = 0;
+    uint32_t apiId = 0;
     Session* session;
 };
 
-TelegramClient* CreateTelegramClient(int apiId, char* apiHash);
+TelegramClient* CreateTelegramClient(uint32_t apiId, char* apiHash);
 bool Connect(TelegramClient* client, bool reconnect);
 void DoAuthentication();
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12]);

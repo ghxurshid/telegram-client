@@ -2,7 +2,7 @@
 #include "ByteArray.h"
 struct TcpMessage
 {
-	int SequanceNumber;
+	uint32_t SequanceNumber;
 	ByteArray Body;
 };
 

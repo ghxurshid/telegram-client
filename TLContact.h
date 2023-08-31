@@ -1,16 +1,16 @@
 #pragma once
 struct TLContact
 {
-	int UserId;
+	uint32_t UserId;
 	bool Mutual;
 };
 
 struct TLContacts
 {
-	int size;
+	uint32_t size;
 	TLContact* data;
 };
 
-TLContacts CreateContacts(int size);
+TLContacts CreateContacts(uint32_t size);
 void ClearContacts(TLContacts& contacts);
 

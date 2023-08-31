@@ -1,6 +1,7 @@
+#include <stdint.h>
 #include "TLContact.h"
 
-TLContacts CreateContacts(int size)
+TLContacts CreateContacts(uint32_t size)
 {
 	TLContacts contacts{ size, new TLContact[size] };
 	return contacts;

@@ -1,7 +1,9 @@
 #pragma once
+#include <stdint.h>
 #include "TLUser.h"
 #include "AuthKey.h"
 #include "ByteArray.h"
+
 
 /// <summary>
 /// Bu struct sessia haqida informatsiyani saqlaydi
@@ -10,28 +12,28 @@ struct Session
 {
     ByteArray SessionUserId;
 
-    AuthKey* AuthKey;
+    AuthKey* authKey;
 
-    unsigned long Id; //8 bayt
+    uint64_t Id; //8 bayt
 
-    int Sequence; //4 bayt
+    uint32_t Sequence; //4 bayt
 
-    unsigned long Salt; //8 bayt
+    uint64_t Salt; //8 bayt
 
-    int TimeOffset; //4 bayt
+    uint32_t TimeOffset; //4 bayt
 
-    long LastMessageId; //8 bayt
+    uint64_t LastMessageId; //8 bayt
 
-    int SessionExpires; //4 bayt
+    uint32_t SessionExpires; //4 bayt
 
-    TLUser* TLUser;
+    TLUser* User;
 };
 
 ByteArray ToBytes(Session* session);
 Session* FromBytes(ByteArray buffer);
-void Save();
+void Save(Session* session);
 Session* TryLoadOrCreateNew();
-unsigned long GenerateRandomUlong();
+uint64_t GenerateRandomUuint64_t();
  
 
 
