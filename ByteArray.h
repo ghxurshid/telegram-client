@@ -8,7 +8,7 @@ struct ByteArray
 };
 
 ByteArray CreateByteArray(uint16_t size);
-void DeleteByteArray(ByteArray& obj);
+void ClearByteArray(ByteArray& obj);
 
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2);
 

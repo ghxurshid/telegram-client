@@ -1,4 +1,5 @@
 #include "TelegramClient.h"
+#include "MtProtoPlainSender.h"
  
 TelegramClient* CreateTelegramClient(uint32_t apiId, char* apiHash)
 {     
@@ -15,7 +16,7 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 {
 	Session* session = client->session;	 
 
-	if (session->AuthKey == nullptr || reconnect)
+	if (session->authKey == nullptr || reconnect)
 	{
 		 DoAuthentication();		 
 	}
@@ -44,6 +45,9 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 
 void DoAuthentication()
 {
+    ByteArray data = CreateByteArray(10);
+    MtPlain_Send(data);
+
 
 }
 
@@ -71,7 +75,7 @@ bool IsUserAuthorized(TelegramClient* client)
 {
     if (client == nullptr || 
         client->session == nullptr ||
-        client->session->TLUser == nullptr) return false;
+        client->session->User == nullptr) return false;
      
     return true;
 }

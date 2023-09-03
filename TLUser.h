@@ -1,8 +1,21 @@
 #pragma once
 #include <stdint.h>
+#include <stdio.h>
+
+struct TLAbsUserProfilePhoto
+{
+    int32_t Constructor;
+};
+
+struct TLAbsUserStatus
+{
+    int32_t Constructor;
+};
 
 struct TLUser
 {
+    int32_t Constructor = 773059779;
+
     uint32_t Flags;
 
     bool Self;
@@ -25,8 +38,8 @@ struct TLUser
     char* Username;
     char* Phone;
 
-    /*TLAbsUserProfilePhoto Photo;
-    TLAbsUserStatus Status;*/
+    TLAbsUserProfilePhoto* Photo;
+    TLAbsUserStatus* Status;
 
     uint32_t BotInfoVersion;
     char* RestrictionReason;
@@ -35,4 +48,6 @@ struct TLUser
 };
 
 void UserWriteBytes(TLUser* user, FILE* fp);
+TLUser* UserReadBytes(FILE* fp);
+void ComputeFlags(TLUser* user);
 

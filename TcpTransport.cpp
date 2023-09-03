@@ -98,12 +98,30 @@ uint64_t AvailableBytes()
 }
 
 void TcpSend(ByteArray data)
-{
-    TcpMessage message{ sendCount++, data };
-    ByteArray buff = Encode(message);
+{ 
+    int idx = 0;
+    int lenth12 = data.size + 12;
+
+    for (int i = 0; i < 4; i++)
+    {
+        data.data[idx ++] = (lenth12 >> (i * 8)) & 0xFF;
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        data.data[idx ++] = (sendCount >> (i * 8)) & 0xFF;
+    }
+     
+    Crc32 crc = new Crc32();
+    byte[] buffer = crc.ComputeHash(memoryStream.GetBuffer(), 0, 8 + Body.Length).Reverse().ToArray();
+    binaryWriter.Write(buffer);
+    return memoryStream.ToArray();
+
+
 
     // Sends some data to server/receiver...
     BytesSent = send(sock, (const char*)buff.data, buff.size, 0);
+    ClearTcpMessage(message);
 
     if (BytesSent == SOCKET_ERROR) printf("Client: send() error %ld.\n", WSAGetLastError());
 }

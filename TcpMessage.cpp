@@ -9,3 +9,9 @@ TcpMessage Decode(ByteArray body)
 {
 	return TcpMessage();
 }
+
+void ClearTcpMessage(TcpMessage& message)
+{
+	message.SequanceNumber = 0;
+	ClearByteArray(message.Body);
+}

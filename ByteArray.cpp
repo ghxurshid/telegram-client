@@ -9,7 +9,7 @@ ByteArray CreateByteArray(uint16_t size)
 	return byteArray;
 }
 
-void DeleteByteArray(ByteArray& obj)
+void ClearByteArray(ByteArray& obj)
 {
 	delete[] obj.data;
 	obj.size = 0;
@@ -34,8 +34,8 @@ ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2)
 		newArr.data[offset + i] = arr2.data[i];
 	}
 
-	DeleteByteArray(arr1);
-	DeleteByteArray(arr2);
+	ClearByteArray(arr1);
+	ClearByteArray(arr2);
 
 	return newArr;
 }

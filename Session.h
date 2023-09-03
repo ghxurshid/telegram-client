@@ -10,7 +10,7 @@
 /// </summary>
 struct Session
 {
-    ByteArray SessionUserId;
+    char* SessionUserId;
 
     AuthKey* authKey;
 
@@ -29,11 +29,13 @@ struct Session
     TLUser* User;
 };
 
+Session* CreateSession();
 ByteArray ToBytes(Session* session);
 Session* FromBytes(ByteArray buffer);
 void Save(Session* session);
+Session* Load();
 Session* TryLoadOrCreateNew();
-uint64_t GenerateRandomUuint64_t();
+uint64_t GenerateRandomUlong();
  
 
 

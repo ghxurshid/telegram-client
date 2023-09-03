@@ -4,14 +4,17 @@
 #include <iostream>
 #include <string.h>
 #include <memory.h>
+#include <locale>
 
 #include "TelegramClient.h"
 
 uint32_t main()
 {
+    setlocale(LC_ALL, "Russian");
+
     uint32_t apiId = 22236638;
     char* apiHash = (char*)"fdf44e15f78621fe8d76caefac19761a";
-    printf("uuint64_t size: %i", sizeof(uint64_t));
+    
     // Номер телефона пользователя
     char* phoneNum = (char*)"+998998346521";
 

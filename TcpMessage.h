@@ -9,3 +9,5 @@ struct TcpMessage
 ByteArray Encode(TcpMessage message);
 TcpMessage Decode(ByteArray body);
 
+void ClearTcpMessage(TcpMessage& message);
+

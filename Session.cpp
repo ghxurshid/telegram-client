@@ -1,10 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 #include "Session.h"
+#include "Utils.h"
 
 const int   ConnectionPort    = 443;
 const char* ConnectionAddress = "149.154.175.100";
 
-void WriteBytes(char* bytes, int count, FILE* fp);
+Session* CreateSession()
+{
+    return new Session();
+}
  
 ByteArray ToBytes(Session* session)
 {
@@ -19,7 +25,7 @@ Session* FromBytes(ByteArray buffer)
 void Save(Session* session)
 {
     FILE* fp;
-    int ret = fopen_s(&fp, "session.dat", "w");
+    int ret = fopen_s(&fp, "session.dat", "wb");
     if (fp == nullptr || session == nullptr) return;
 
     fwrite((void*)session->Id, sizeof(uint64_t), 1, fp);
@@ -29,60 +35,79 @@ void Save(Session* session)
     fwrite((void*)session->TimeOffset, sizeof(uint32_t), 1, fp);
     WriteBytes((char*)ConnectionAddress, sizeof(ConnectionAddress), fp);
     fwrite((void*)ConnectionPort, sizeof(uint32_t), 1, fp);
+
     if (session->User != nullptr)
     {
-
+        fwrite((void*)1, sizeof(uint32_t), 1, fp); 
+        fwrite((void*)session->SessionExpires, sizeof(uint32_t), 1, fp); 
+        UserWriteBytes(session->User, fp);
     }
     else
     {
         fwrite((void*)0, sizeof(uint8_t), 1, fp);
     }
 
-   
-    fwrite((void*)session->Id, sizeof(uint64_t), 1, fp);
-     
+    WriteBytes((char*)(session->authKey->key), sizeof(session->authKey->key), fp);     
+}
+
+Session* Load()
+{
+    FILE* fp;
+    int ret = fopen_s(&fp, "session.dat", "rb");
+    if (fp == nullptr) return nullptr;
+
+    rewind(fp);
+    uint64_t id = 0;            fread(&id, sizeof(uint64_t), 1, fp);
+    uint32_t sequence = 0;      fread(&sequence, sizeof(uint32_t), 1, fp);
+    uint64_t salt = 0;          fread(&salt, sizeof(uint64_t), 1, fp);
+    int64_t lastMessageId = 0;  fread(&lastMessageId, sizeof(int64_t), 1, fp);
+    uint32_t timeOffset = 0;    fread(&timeOffset, sizeof(uint32_t), 1, fp);    
+    char* address =             ReadBytes(fp);
+    uint32_t port;              fread(&port, sizeof(uint32_t), 1, fp);
+    uint32_t flagBuff;          fread(&flagBuff, sizeof(uint32_t), 1, fp);
+
+    bool flag = (flagBuff == 1 ? true : false);
+    uint32_t sessionExpires = 0;
+    TLUser* tLUser = nullptr;
+
+    if (flag)
+    {
+        sessionExpires = fread(&sessionExpires, sizeof(uint32_t), 1, fp);
+        tLUser = UserReadBytes(fp);
+    }
+
+    char* data = ReadBytes(fp);    
+
+    Session* session = CreateSession();      
+    session->authKey = CreateAuthKey(data);
+    session->Id = id;
+    session->Salt = salt;
+    session->Sequence = sequence;
+    session->LastMessageId = lastMessageId;
+    session->TimeOffset = timeOffset;
+    session->SessionExpires = sessionExpires;
+    session->User = tLUser;
+    session->SessionUserId = (char*)"session";
+    
+    return session;
 }
 
 Session* TryLoadOrCreateNew()
 {
-    return nullptr;
+    Session* session = Load();
+
+    if (session == nullptr)
+    {
+        session = CreateSession();
+        session->Id = GenerateRandomUlong();              
+        session->SessionUserId = (char*)"session";         
+    }
+
+    return session;
 }
 
-uint64_t GenerateRandomUuint64_t()
+uint64_t GenerateRandomUlong()
 {
-    return 0;
-} 
-
-
-void WriteBytes(char* bytes, int count, FILE* fp)
-{
-    int num;
-    if (count < 254)
-    {
-        num = (count + 1) % 4;
-        if (num != 0)
-        {
-            num = 4 - num;
-        }
-        fwrite((void*)count, sizeof(uint8_t), 1, fp);         
-        fwrite((void*)bytes, sizeof(uint8_t), count, fp);        
-    }
-    else
-    {
-        num = count % 4;
-        if (num != 0)
-        {
-            num = 4 - num;
-        }
-        fwrite((void*)254, sizeof(uint8_t), 1, fp);
-        fwrite((void*)count, sizeof(uint8_t), 1, fp);
-        fwrite((void*)(count >> 8), sizeof(uint8_t), 1, fp);
-        fwrite((void*)(count >> 16), sizeof(uint8_t), 1, fp);
-        fwrite((void*)bytes, sizeof(uint8_t), count, fp);       
-    }
-
-    for (int i = 0; i < num; i++)
-    {
-        fwrite((void*)0, sizeof(uint8_t), 1, fp);
-    }
+    srand(time(0));
+    return  rand();    
 }
