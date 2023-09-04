@@ -1,3 +1,4 @@
+#include "Api.h"
 #include "TelegramClient.h"
 #include "MtProtoPlainSender.h"
  
@@ -45,10 +46,27 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 
 void DoAuthentication()
 {
-    ByteArray data = CreateByteArray(10);
+    {
+        ByteArray data = CreateByteArray(52);
+        uint32_t constructor = 1615239032;
+        int idx = 28;
+ 
+        for (int i = 0; i < 4; i++)
+        {
+            data.data[idx++] = (constructor >> (i * 8)) & 0xFF;
+        }
+
+        for (int i = 0; i < 16; i++)
+        {
+            data.data[idx++] = Rand8();
+        }
+    }
+    
+
+
+
     MtPlain_Send(data);
-
-
+    ClearByteArray(data);
 }
 
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])

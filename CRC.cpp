@@ -1,42 +1,20 @@
 #include "CRC.h"
 
 uint32_t hash;
-uint32_t seed = 0xffffffff;
+uint32_t seed;
 uint8_t  table[256];
-
 ByteArray HashValue;
-
-uint32_t polynomial = 3988292384u;
-
-#pragma region Private
-uint32_t CalculateHash(uint8_t* table, uint32_t seed, uint8_t* buffer, int start, int size)
+uint32_t polynomial;
+bool initialized = false;
+ 
+void Init()
 {
-    uint32_t num = seed;
-    for (int i = start; i < start + size; i++)
-    {
-        num = (num >> 8) ^ table[buffer[i] ^ (num & 0xFF)];
-    }
+    if (initialized) return;
 
-    return num;
-}
-
-void HashCore(uint8_t* buffer, int offset, int count)
-{
-    hash = CalculateHash(table, hash, buffer, offset, count);
-}
-
-ByteArray HashFinal()
-{
-
-}
-
-void Initialize()
-{
+    seed = 0xffffffff;
     hash = seed;
-}
+    polynomial = 3988292384u;
 
-void InitializeTable()
-{  
     for (int i = 0; i < 256; i++)
     {
         uint32_t num = (uint32_t)i;
@@ -46,23 +24,25 @@ void InitializeTable()
         }
 
         table[i] = num;
-    } 
+    }
+
+    initialized = true;
 }
 
-ByteArray CaptureHashCodeAndReinitialize()
+uint32_t ComputeCRC(uint8_t* buffer, int offset, int count)
 {
-    HashValue = HashFinal(); 
-  
-    Initialize();
-    return HashValue; 
-}
-#pragma endregion
+    if (!initialized) Init();
+    
+    uint32_t num = seed;
+    for (int i = offset; i < offset + count; i++)
+    {
+        num = (num >> 8) ^ table[buffer[i] ^ (num & 0xFF)];
+    }
 
-#pragma region Public
-ByteArray ComputeHash(uint8_t* buffer, int offset, int count)
-{
-    HashCore(buffer, offset, count);
-    return CaptureHashCodeAndReinitialize();     
-}
-#pragma endregion
+    hash = num;
 
+    uint32_t finalHash = ~hash;
+    hash = seed;
+    return finalHash;
+}
+ 

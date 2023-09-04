@@ -2,9 +2,9 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
+#include "CRC.h"
 #include "TcpTransport.h"
 #include "TcpMessage.h"
-
  
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 //#pragma comment (lib, "Ws2_32.lib")
@@ -29,8 +29,12 @@ uint32_t sendCount = 0;
 char sendbuf[1024] = "This is a test string from sender";
 uint32_t BytesSent, nlen;
 
+bool connected = false;
+
 void TcpConnect()
 {
+    if (connected) return;
+
     // Initialize Winsock version 2.2
     if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
         std::cerr << "Failed to initialize Winsock." << std::endl;
@@ -70,24 +74,43 @@ void TcpConnect()
         WSACleanup();
         return;
     }
+
+    connected = true;
 }
 
 void TcpDisconnect()
 {
+    if (!connected) return;
+
     if (shutdown(sock, SD_SEND) != 0)
+    {
         printf("Client: Well, there is something wrong with the shutdown(). The error code : % ld\n", WSAGetLastError());
+        return;
+    }
     else
+    {
         printf("Client: shutdown() looks OK...\n");
+    }
 
     if (closesocket(sock) != 0)
+    {
         printf("Client: Cannot close \"SendingSocket\" socket. Error code: %ld\n", WSAGetLastError());
+        return;
+    }
     else
+    {
         printf("Client: Closing \"SendingSocket\" socket...\n");
+    }
 
     if (WSACleanup() != 0)
+    {
         printf("Client: WSACleanup() failed!...\n");
+        return;
+    }        
     else
         printf("Client: WSACleanup() is OK...\n");
+
+    connected = false;
 }
 
 uint64_t AvailableBytes()
@@ -99,6 +122,8 @@ uint64_t AvailableBytes()
 
 void TcpSend(ByteArray data)
 { 
+    if (!connected) TcpConnect();
+
     int idx = 0;
     int lenth12 = data.size + 12;
 
@@ -111,31 +136,66 @@ void TcpSend(ByteArray data)
     {
         data.data[idx ++] = (sendCount >> (i * 8)) & 0xFF;
     }
-     
-    Crc32 crc = new Crc32();
-    byte[] buffer = crc.ComputeHash(memoryStream.GetBuffer(), 0, 8 + Body.Length).Reverse().ToArray();
-    binaryWriter.Write(buffer);
-    return memoryStream.ToArray();
 
+    idx = data.size - 4;
+    uint32_t crc = ComputeCRC(data.data, 0, data.size - 4);
 
-
-    // Sends some data to server/receiver...
-    BytesSent = send(sock, (const char*)buff.data, buff.size, 0);
-    ClearTcpMessage(message);
-
-    if (BytesSent == SOCKET_ERROR) printf("Client: send() error %ld.\n", WSAGetLastError());
+    for (int i = 0; i < 4; i++)
+    {
+        data.data[idx++] = (crc >> (i * 8)) & 0xFF;
+    }     
+ 
+    BytesSent = send(sock, (const char*)data.data, data.size, 0);
+  
+    if (BytesSent == SOCKET_ERROR) printf("TcpSend: send() error %ld.\n", WSAGetLastError());
+    else { printf("TcpSend: %i bayts have sended.", BytesSent); sendCount++; }
 }
 
-TcpMessage TcpReceive()
+ByteArray TcpReceive()
 {
+    uint32_t size = 0;
+    int count = recv(sock, (char*)size, sizeof(uint32_t), 0);
+
     ByteArray recvData{};
-    uint32_t available = 0;
-    while ((available = AvailableBytes()) > 0)
+
+    if (count != sizeof(uint32_t))
     {
-        ByteArray buff = CreateByteArray(available);
-        uint32_t bytesRead = recv(sock, (char*)buff.data, (int)buff.size, 0);
-        recvData = Add2ByteArray(recvData, buff);
+        printf("TcpReceive: count of readed bytes is not equal to sizeof(uint32_t)\n");
+        return CreateByteArray(0);;
+    }
+    
+    if (size <= 0 || size > 0X00100000)
+    {
+        printf("TcpReceive: size is invalid value\n");
+        return CreateByteArray(0);;
     }
 
-    return Decode(recvData);
+    recvData = CreateByteArray(size);
+
+    count = recv(sock, (char*)recvData.data, size, 0);
+
+    if (count != size)
+    {
+        printf("TcpReceive: received data length is not equal to size of 'data'.\n");
+        return CreateByteArray(0);;
+    }
+
+    int crcIndx = recvData.size - 4;
+    uint8_t* data = recvData.data;
+
+    uint32_t crc = ComputeCRC(data, 0, recvData.size - 4);
+    uint32_t crcRecv = data[crcIndx + 0] << 0  | 
+                       data[crcIndx + 1] << 8  |
+                       data[crcIndx + 2] << 16 |
+                       data[crcIndx + 3] << 24 ;
+
+    if (crc != crcRecv)
+    {
+        printf("TcpReceive: received and computed crc is not equal.\n");
+        return CreateByteArray(0);
+    }
+
+    printf("TcpReceive: recv is ok! %i bayts have readed.\n");
+     
+    return recvData;       
 }

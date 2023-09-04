@@ -10,5 +10,5 @@ uint64_t AvailableBytes();
 
 void TcpSend(ByteArray data);
 
-TcpMessage TcpReceive();
+ByteArray TcpReceive();
  

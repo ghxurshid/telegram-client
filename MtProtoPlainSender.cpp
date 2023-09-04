@@ -21,10 +21,12 @@ void MtPlain_Send(ByteArray data)
 	{
 		data.data[idx ++] = 0;		 
 	}
+
 	uint64_t id = GetNewMessageId(timeOffset, lastMessageId);
+
 	for (int i = 0; i < 8; i++)
 	{
-		data.data[idx ++] = (id >> (i*8)) & 0xFF;
+		data.data[idx ++] = (id >> (i * 8)) & 0xFF;
 	}
 	
 	for (int i = 0; i < 4; i++)
@@ -37,6 +39,5 @@ void MtPlain_Send(ByteArray data)
 
 ByteArray MtPlain_Receive()
 {
-	TcpMessage message = TcpReceive();
-	return message.Body;
+	return TcpReceive();
 }
