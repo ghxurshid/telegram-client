@@ -60,13 +60,14 @@ void DoAuthentication()
         {
             data.data[idx++] = Rand8();
         }
+
+        MtPlain_Send(data);
+        ClearByteArray(data);
     }
     
+    {
 
-
-
-    MtPlain_Send(data);
-    ClearByteArray(data);
+    }
 }
 
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])

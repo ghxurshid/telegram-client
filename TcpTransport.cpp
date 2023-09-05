@@ -170,11 +170,27 @@ ByteArray TcpReceive()
         return CreateByteArray(0);;
     }
 
-    recvData = CreateByteArray(size);
+    recvData = CreateByteArray(size); //Tcp socketdan o`qilishi kerak bo`lgan hamma bayt uchun joy ajratildi
 
-    count = recv(sock, (char*)recvData.data, size, 0);
+    int idx = 0;
+    char* buff = new char[128];
 
-    if (count != size)
+    for (int i = 0; i < 4; i++)
+    {
+        recvData.data[idx++] = (size >> (i * 8)) & 0xFF;
+    }
+
+    do
+    {
+        count = recv(sock, buff, 128, 0);
+        for (int i = 0; i < count; i++)
+        {
+            if (idx >= size) break;
+            recvData.data[idx++] = buff[i];
+        }
+    } while (idx < size);
+    
+    if (recvData.size != size)
     {
         printf("TcpReceive: received data length is not equal to size of 'data'.\n");
         return CreateByteArray(0);;
@@ -195,7 +211,7 @@ ByteArray TcpReceive()
         return CreateByteArray(0);
     }
 
-    printf("TcpReceive: recv is ok! %i bayts have readed.\n");
+    printf("TcpReceive: recv is ok! %i bayts have readed.\n", recvData.size);
      
     return recvData;       
 }
