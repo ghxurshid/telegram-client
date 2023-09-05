@@ -1,4 +1,5 @@
 #include "Api.h"
+#include "Utils.h"
 #include "TelegramClient.h"
 #include "MtProtoPlainSender.h"
  
@@ -65,8 +66,84 @@ void DoAuthentication()
         ClearByteArray(data);
     }
     
+    char* nonce;
+    char* servernonce;
+
+    int count = 0;
+    char* pqBytes;
+
+    uint32_t num3 = 0;
+    char** fingerPrint;
+
+    {
+        int idx = 28;
+        ByteArray recvData = MtPlain_Receive();
+        
+        uint8_t* data = recvData.data;
+        uint32_t num =  (data[idx++] << 0)  |
+                        (data[idx++] << 8)  |
+                        (data[idx++] << 16) |
+                        (data[idx++] << 24) ;
+
+        if (num != 85337187)
+        {
+            printf("DoAuthentication: incorrect value of 'num' = %i\n", num);
+            return;
+        }
+
+        nonce = new char[16];
+        for (int i = 0; i < 16; i++)
+        {
+            nonce[i] = data[idx++];
+        }
+
+        servernonce = new char[16];
+        for (int i = 0; i < 16; i++)
+        {
+            servernonce[i] = data[idx++];
+        }
+
+        count = 0;
+        pqBytes = ReadBytesFromArray((char*)data, idx, count);
+        idx += count;
+
+        uint32_t num2 = (data[idx++] << 0)  |
+                        (data[idx++] << 8)  |
+                        (data[idx++] << 16) |
+                        (data[idx++] << 24) ;
+                
+        if (num2 != 481674261)
+        {
+            printf("DoAuthentication: Invalid vector constructor number %i\n", num2);
+            return;
+        }
+
+        num3 = (data[idx++] << 0)  |
+                        (data[idx++] << 8)  |
+                        (data[idx++] << 16) |
+                        (data[idx++] << 24) ;
+
+        fingerPrint = new char* [num3];
+        for (int i = 0; i < num3; i++)
+        {
+            fingerPrint[i] = new char[8];
+            for (int j = 0; j < 8; j++)
+            {
+                fingerPrint[i][j] = data[idx++];
+            }
+        }
+    }
+
     {
 
+
+
+
+        delete[] nonce;
+        delete[] servernonce;
+        delete[] pqBytes;
+        for (int i = 0; i < num3; i++) delete[] fingerPrint[i];
+        delete[] fingerPrint;
     }
 }
 

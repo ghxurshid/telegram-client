@@ -3,7 +3,6 @@
 #include "TcpTransport.h"
 #include "Helper.h"
  
- 
 uint32_t timeOffset;
 uint64_t lastMessageId;
   
