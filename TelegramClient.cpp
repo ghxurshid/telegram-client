@@ -1,4 +1,4 @@
-#include "Api.h"
+
 #include "Utils.h"
 #include "Step1.h"
 #include "TelegramClient.h"
@@ -49,7 +49,10 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 Step3Response DoAuthentication()
 {
     {
-        Step1Request stp1Reqs = CreateStep1Request();
+        Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); ClearStep1Request(stp1Req);
+        MtPlain_Send(stp1ReqPacket); ClearPacket(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
+        Step1Response step1Res = Step1ResponseFromBytes(stp1ResPacket); ClearPacket(stp1ResPacket);
+        
 
         ByteArray data = CreateByteArray(52);
         uint32_t constructor = 1615239032;

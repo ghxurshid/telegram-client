@@ -69,6 +69,12 @@
     <ClCompile Include="Step3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Packets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BigInteger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpTransport.h">
@@ -120,6 +126,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Step3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Packets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BigInteger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

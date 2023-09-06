@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Api.cpp" />
     <ClCompile Include="AuthKey.cpp" />
+    <ClCompile Include="BigInteger.cpp" />
     <ClCompile Include="ByteArray.cpp" />
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Helper.cpp" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Api.h" />
     <ClInclude Include="AuthKey.h" />
+    <ClInclude Include="BigInteger.h" />
     <ClInclude Include="ByteArray.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="Helper.h" />
