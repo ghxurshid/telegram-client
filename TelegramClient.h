@@ -3,6 +3,7 @@
 #include "TcpTransport.h"
 #include "Session.h"
 #include "TLContact.h"
+#include "Step3.h"
 
 struct TelegramClient
 {
@@ -13,7 +14,7 @@ struct TelegramClient
 
 TelegramClient* CreateTelegramClient(uint32_t apiId, char* apiHash);
 bool Connect(TelegramClient* client, bool reconnect);
-void DoAuthentication();
+Step3Response DoAuthentication();
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12]);
 TLUser* MakeAuth(TelegramClient* client, char phoneNumber[12], char* hash, char* code);
 TLContacts GetContacts(TelegramClient* client);

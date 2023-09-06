@@ -1,5 +1,6 @@
 #pragma once
 #include "ByteArray.h"
+#include "Packets.h"
 
-void MtPlain_Send(ByteArray data);
-ByteArray MtPlain_Receive();
+void MtPlain_Send(Packet packet);
+Packet MtPlain_Receive();

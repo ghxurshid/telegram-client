@@ -1,5 +1,6 @@
 #include "Api.h"
 #include "Utils.h"
+#include "Step1.h"
 #include "TelegramClient.h"
 #include "MtProtoPlainSender.h"
  
@@ -45,9 +46,11 @@ bool Connect(TelegramClient* client, bool reconnect = false)
     return true;
 }
 
-void DoAuthentication()
+Step3Response DoAuthentication()
 {
     {
+        Step1Request stp1Reqs = CreateStep1Request();
+
         ByteArray data = CreateByteArray(52);
         uint32_t constructor = 1615239032;
         int idx = 28;

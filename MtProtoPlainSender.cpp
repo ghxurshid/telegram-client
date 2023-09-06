@@ -6,9 +6,12 @@
 uint32_t timeOffset;
 uint64_t lastMessageId;
   
-void MtPlain_Send(ByteArray data)
+void MtPlain_Send(Packet packet)
 {
-	if (data.size < 32)
+	int size = packet.body.size;
+	uint8_t* data = packet.body.data;
+
+	if (size < 32)
 	{
 		printf("MtPlain_Send: data size is less than 32");
 		return;
@@ -18,25 +21,25 @@ void MtPlain_Send(ByteArray data)
 
 	for (int i = 0; i < 8; i++)
 	{
-		data.data[idx ++] = 0;		 
+		data[idx ++] = 0;		 
 	}
 
 	uint64_t id = GetNewMessageId(timeOffset, lastMessageId);
 
 	for (int i = 0; i < 8; i++)
 	{
-		data.data[idx ++] = (id >> (i * 8)) & 0xFF;
+		data[idx ++] = (id >> (i * 8)) & 0xFF;
 	}
 	
 	for (int i = 0; i < 4; i++)
 	{
-		data.data[idx++] = (data.size >> (i * 8)) & 0xFF;
+		data[idx++] = (size >> (i * 8)) & 0xFF;
 	}
  
-	TcpSend(data); 
+	TcpSend(packet);
 }
 
-ByteArray MtPlain_Receive()
+Packet MtPlain_Receive()
 {
 	return TcpReceive();
 }

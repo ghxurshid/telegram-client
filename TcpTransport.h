@@ -1,5 +1,5 @@
 #pragma once
-#include "ByteArray.h"
+#include "Packets.h"
 #include "TcpMessage.h"
  
 void TcpConnect();
@@ -8,7 +8,7 @@ void TcpDisconnect();
 
 uint64_t AvailableBytes();
 
-void TcpSend(ByteArray data);
+void TcpSend(Packet data);
 
-ByteArray TcpReceive();
+Packet TcpReceive();
  

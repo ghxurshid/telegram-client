@@ -3,6 +3,7 @@
 #include <WS2tcpip.h>
 
 #include "CRC.h"
+#include "ByteArray.h"
 #include "TcpTransport.h"
 #include "TcpMessage.h"
  
@@ -120,64 +121,69 @@ uint64_t AvailableBytes()
     return availableBytes;
 }
 
-void TcpSend(ByteArray data)
+void TcpSend(Packet packet)
 { 
     if (!connected) TcpConnect();
 
+    int size = packet.body.size;
+    uint8_t* data = packet.body.data;
+
     int idx = 0;
-    int lenth12 = data.size + 12;
+    int lenth12 = size + 12;
 
     for (int i = 0; i < 4; i++)
     {
-        data.data[idx ++] = (lenth12 >> (i * 8)) & 0xFF;
+        data[idx ++] = (lenth12 >> (i * 8)) & 0xFF;
     }
 
     for (int i = 0; i < 4; i++)
     {
-        data.data[idx ++] = (sendCount >> (i * 8)) & 0xFF;
+        data[idx ++] = (sendCount >> (i * 8)) & 0xFF;
     }
 
-    idx = data.size - 4;
-    uint32_t crc = ComputeCRC(data.data, 0, data.size - 4);
+    idx = size - 4;
+    uint32_t crc = ComputeCRC(data, 0, size - 4);
 
     for (int i = 0; i < 4; i++)
     {
-        data.data[idx++] = (crc >> (i * 8)) & 0xFF;
+        data[idx++] = (crc >> (i * 8)) & 0xFF;
     }     
  
-    BytesSent = send(sock, (const char*)data.data, data.size, 0);
+    BytesSent = send(sock, (const char*)data, size, 0);
   
     if (BytesSent == SOCKET_ERROR) printf("TcpSend: send() error %ld.\n", WSAGetLastError());
     else { printf("TcpSend: %i bayts have sended.", BytesSent); sendCount++; }
 }
 
-ByteArray TcpReceive()
+Packet TcpReceive()
 {
     uint32_t size = 0;
     int count = recv(sock, (char*)size, sizeof(uint32_t), 0);
-
-    ByteArray recvData{};
+  
 
     if (count != sizeof(uint32_t))
     {
         printf("TcpReceive: count of readed bytes is not equal to sizeof(uint32_t)\n");
-        return CreateByteArray(0);;
+        return CreatePacket(0);// CreateByteArray(0);;
     }
     
-    if (size <= 0 || size > 0X00100000)
+    if (size <= 32 || size > 0X00100000)
     {
         printf("TcpReceive: size is invalid value\n");
-        return CreateByteArray(0);;
+        return CreatePacket(0);
     }
 
-    recvData = CreateByteArray(size); //Tcp socketdan o`qilishi kerak bo`lgan hamma bayt uchun joy ajratildi
+    Packet recvData = CreatePacket(size - 32); //Tcp socketdan o`qilishi kerak bo`lgan hamma bayt uchun joy ajratildi
+
+    int size2 = recvData.body.size;
+    uint8_t* data = recvData.body.data;
 
     int idx = 0;
     char* buff = new char[128];
 
     for (int i = 0; i < 4; i++)
     {
-        recvData.data[idx++] = (size >> (i * 8)) & 0xFF;
+        data[idx++] = (size >> (i * 8)) & 0xFF;
     }
 
     do
@@ -186,20 +192,19 @@ ByteArray TcpReceive()
         for (int i = 0; i < count; i++)
         {
             if (idx >= size) break;
-            recvData.data[idx++] = buff[i];
+            data[idx++] = buff[i];
         }
     } while (idx < size);
     
-    if (recvData.size != size)
+    if (size2 != size)
     {
         printf("TcpReceive: received data length is not equal to size of 'data'.\n");
-        return CreateByteArray(0);;
+        return CreatePacket(0);
     }
 
-    int crcIndx = recvData.size - 4;
-    uint8_t* data = recvData.data;
+    int crcIndx = size2 - 4;     
 
-    uint32_t crc = ComputeCRC(data, 0, recvData.size - 4);
+    uint32_t crc = ComputeCRC(data, 0, crcIndx);
     uint32_t crcRecv = data[crcIndx + 0] << 0  | 
                        data[crcIndx + 1] << 8  |
                        data[crcIndx + 2] << 16 |
@@ -208,10 +213,10 @@ ByteArray TcpReceive()
     if (crc != crcRecv)
     {
         printf("TcpReceive: received and computed crc is not equal.\n");
-        return CreateByteArray(0);
+        return CreatePacket(0);
     }
 
-    printf("TcpReceive: recv is ok! %i bayts have readed.\n", recvData.size);
+    printf("TcpReceive: recv is ok! %i bayts have readed.\n", size2);
      
     return recvData;       
 }

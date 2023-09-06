@@ -3,17 +3,18 @@
 
 struct Step1Request
 {
+	uint8_t* nonce;
 };
 
 struct Step1Response
 {
 };
 
-Step1Request* CreateStep1Request();
+Step1Request CreateStep1Request();
 
-void ClearStep1Request(Step1Request* request); 
-void ClearStep1Response(Step1Response* response);
+void ClearStep1Request(Step1Request& request); 
+void ClearStep1Response(Step1Response& response);
 
-ByteArray Step1RequestToBytes(Step1Request* request);
-Step1Response* Step1ResponseFromBytes(ByteArray bytes);
+ByteArray Step1RequestToBytes(Step1Request request);
+Step1Response Step1ResponseFromBytes(ByteArray bytes);
 
