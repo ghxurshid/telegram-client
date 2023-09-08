@@ -3,7 +3,7 @@
 Packet CreatePacket(int bodySz)
 {
     Packet packet;
-    packet.currentIdx = 32;
+    packet.currentIdx = 28;
     packet.bodySize = bodySz;    
     if (bodySz > 0) packet.body = CreateByteArray(bodySz + 32);
 
@@ -94,6 +94,44 @@ int PacketWriteArray(Packet& packet, ByteArray arr)
     return packet.currentIdx - beginIndex;
 }
 
+int PacketWriteLongArray(Packet& packet, ByteArray arr)
+{
+    int num;    
+    int count = arr.size;
+    int beginIndex = packet.currentIdx;
+    if (count < 254)
+    {
+        num = (count + 1) % 4;
+        if (num != 0)
+        {
+            num = 4 - num;
+        }
+
+        PacketWriteUint8(packet, (uint8_t)count);
+        PacketWriteArray(packet, arr);
+    }
+    else
+    {
+        num = count % 4;
+        if (num != 0)
+        {
+            num = 4 - num;
+        }
+
+        PacketWriteUint8(packet, (uint8_t)254); 
+        PacketWriteUint8(packet, (uint8_t)count); 
+        PacketWriteUint8(packet, (uint8_t)(count >> 8)); 
+        PacketWriteUint8(packet, (uint8_t)(count >> 16)); 
+        PacketWriteArray(packet, arr); 
+    }
+
+    for (int i = 0; i < num; i++)
+    {
+        PacketWriteUint8(packet, (uint8_t)0);
+    }
+    return packet.currentIdx - beginIndex;
+}
+
 
 uint8_t PacketReadUint8(Packet& packet)
 {
@@ -160,5 +198,49 @@ uint64_t PacketReadUint64(Packet& packet)
                      (uint64_t)(packet.body.data[indx + 7] << 56) ;
 
     return value;
+}
+
+ByteArray PacketReadArray(Packet& packet, int count)
+{
+    return ByteArray();
+}
+
+ByteArray PacketReadLongArray(Packet& packet)
+{
+    
+    uint8_t b = PacketReadUint8(packet);
+
+    int num;
+    int num2;
+    if (b == 254)
+    {
+        uint8_t b0 = PacketReadUint8(packet);
+        uint8_t b1 = PacketReadUint8(packet);
+        uint8_t b2 = PacketReadUint8(packet);
+
+        num = b0 | b1 << 8 | b2 << 16;
+        num2 = num % 4;
+    }
+    else
+    {
+        num = b;
+        num2 = (num + 1) % 4;
+    }
+
+    ByteArray arr = PacketReadArray(packet, num);
+     
+
+    if (num2 > 0)
+    {
+        num2 = 4 - num2;
+        PacketReadArray(packet, num2);
+    }
+     
+    return arr;     
+}
+
+char* ReadBytesFromArray(char* buffer, int offset, int& count)
+{
+    
 }
 

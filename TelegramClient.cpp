@@ -49,27 +49,11 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 Step3Response DoAuthentication()
 {
     {
-        Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); ClearStep1Request(stp1Req);
-        MtPlain_Send(stp1ReqPacket); ClearPacket(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
-        Step1Response step1Res = Step1ResponseFromBytes(stp1ResPacket); ClearPacket(stp1ResPacket);
+        Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); 
+        MtPlain_Send(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
+        Step1Response step1Res = Step1ResponseFromBytes(stp1ResPacket); 
         
 
-        ByteArray data = CreateByteArray(52);
-        uint32_t constructor = 1615239032;
-        int idx = 28;
- 
-        for (int i = 0; i < 4; i++)
-        {
-            data.data[idx++] = (constructor >> (i * 8)) & 0xFF;
-        }
-
-        for (int i = 0; i < 16; i++)
-        {
-            data.data[idx++] = Rand8();
-        }
-
-        MtPlain_Send(data);
-        ClearByteArray(data);
     }
     
     char* nonce;
@@ -82,62 +66,7 @@ Step3Response DoAuthentication()
     char** fingerPrint;
 
     {
-        int idx = 28;
-        ByteArray recvData = MtPlain_Receive();
         
-        uint8_t* data = recvData.data;
-        uint32_t num =  (data[idx++] << 0)  |
-                        (data[idx++] << 8)  |
-                        (data[idx++] << 16) |
-                        (data[idx++] << 24) ;
-
-        if (num != 85337187)
-        {
-            printf("DoAuthentication: incorrect value of 'num' = %i\n", num);
-            return;
-        }
-
-        nonce = new char[16];
-        for (int i = 0; i < 16; i++)
-        {
-            nonce[i] = data[idx++];
-        }
-
-        servernonce = new char[16];
-        for (int i = 0; i < 16; i++)
-        {
-            servernonce[i] = data[idx++];
-        }
-
-        count = 0;
-        pqBytes = ReadBytesFromArray((char*)data, idx, count);
-        idx += count;
-
-        uint32_t num2 = (data[idx++] << 0)  |
-                        (data[idx++] << 8)  |
-                        (data[idx++] << 16) |
-                        (data[idx++] << 24) ;
-                
-        if (num2 != 481674261)
-        {
-            printf("DoAuthentication: Invalid vector constructor number %i\n", num2);
-            return;
-        }
-
-        num3 = (data[idx++] << 0)  |
-                        (data[idx++] << 8)  |
-                        (data[idx++] << 16) |
-                        (data[idx++] << 24) ;
-
-        fingerPrint = new char* [num3];
-        for (int i = 0; i < num3; i++)
-        {
-            fingerPrint[i] = new char[8];
-            for (int j = 0; j < 8; j++)
-            {
-                fingerPrint[i][j] = data[idx++];
-            }
-        }
     }
 
     {

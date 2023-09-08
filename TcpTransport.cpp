@@ -175,6 +175,7 @@ Packet TcpReceive()
 
     Packet recvData = CreatePacket(size - 32); //Tcp socketdan o`qilishi kerak bo`lgan hamma bayt uchun joy ajratildi
 
+
     int size2 = recvData.body.size;
     uint8_t* data = recvData.body.data;
 

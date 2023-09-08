@@ -5,18 +5,19 @@
 
 struct Step1Request
 {
-	uint8_t* nonce;
+	ByteArray nonce;
 };
 
 struct Step1Response
 {
-    uint8_t* Nonce;
+    ByteArray Nonce;
 
-    uint8_t* ServerNonce;
+    ByteArray ServerNonce;
 
     BigInteger Pq;
 
-    public List<byte[]> Fingerprints{ get; set; }
+    ByteArray** Fingerprints;
+     
 };
 
 Step1Request CreateStep1Request();
@@ -25,5 +26,5 @@ void ClearStep1Request(Step1Request& request);
 void ClearStep1Response(Step1Response& response);
 
 int Step1RequestToBytes(Step1Request request, Packet& packet);
-Step1Response Step1ResponseFromBytes(Packet& packet);
+Step1Response Step1ResponseFromBytes(Step1Request request, Packet& packet);
 

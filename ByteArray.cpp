@@ -12,8 +12,7 @@ ByteArray CreateByteArray(uint16_t size)
 void ClearByteArray(ByteArray& obj)
 {
 	obj.size = 0;
-	if (obj.data == nullptr) return;
-	delete[] obj.data;	
+	if (obj.data != nullptr) delete[] obj.data;	
 }
 
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2)

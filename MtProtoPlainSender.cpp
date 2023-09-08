@@ -37,6 +37,8 @@ void MtPlain_Send(Packet packet)
 	}
  
 	TcpSend(packet);
+
+	ClearPacket(packet);
 }
 
 Packet MtPlain_Receive()
