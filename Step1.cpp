@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include "Api.h"
+#include "Utils.h"
 #include "Step1.h"
 
 Step1Request CreateStep1Request()
 {
-    Step1Request request;
+    Step1Request request{};
     request.nonce = CreateByteArray(16);
 
     for (int i = 0; i < 16; i++)
@@ -22,27 +23,28 @@ void ClearStep1Request(Step1Request& request)
 
 void ClearStep1Response(Step1Response& response)
 {
-
+    ClearByteArray(response.Nonce);
+    ClearByteArray(response.ServerNonce);
+    ClearBiInteger(response.Pq);
+    ClearByteArrayList(response.Fingerprints);
 }
  
-int Step1RequestToBytes(Step1Request request, Packet& packet)
+int Step1RequestToBytes(Step1Request& request, Packet& packet)
 {
     int beginIndex = packet.currentIdx;
     uint32_t constructor = 1615239032;
 
     PacketWriteUint32(packet, constructor);
     PacketWriteArray(packet, request.nonce);
-
-    ClearStep1Request(request);
-         
+       
     return packet.currentIdx - beginIndex;
 }
 
-Step1Response Step1ResponseFromBytes(Step1Request request, Packet& packet)
+Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet)
 { 
     uint32_t num = PacketReadUint32(packet);
 
-    Step1Response response;
+    Step1Response response{};
    
     if (num != 85337187)
     {
@@ -50,49 +52,41 @@ Step1Response Step1ResponseFromBytes(Step1Request request, Packet& packet)
         return response;
     }
 
-    Packet
-
-    nonce = new char[16];
-    for (int i = 0; i < 16; i++)
+    ByteArray nonce = PacketReadArray(packet, 16);
+    if (!CompareArray(nonce, request.nonce))
     {
-        nonce[i] = data[idx++];
+        printf("Step1ResponseFromBytes: invalid nonce from server\n");
     }
 
-    servernonce = new char[16];
-    for (int i = 0; i < 16; i++)
-    {
-        servernonce[i] = data[idx++];
-    }
+    ByteArray serverNonce = PacketReadArray(packet, 16);
+    ByteArray bytes       = PacketReadLongArray(packet);
 
-    count = 0;
-    pqBytes = ReadBytesFromArray((char*)data, idx, count);
-    idx += count;
-
-    uint32_t num2 = (data[idx++] << 0) |
-        (data[idx++] << 8) |
-        (data[idx++] << 16) |
-        (data[idx++] << 24);
+    BigInteger pq = CreateBigInteger(1, bytes);
+    uint32_t num2 = PacketReadUint32(packet);
 
     if (num2 != 481674261)
     {
-        printf("DoAuthentication: Invalid vector constructor number %i\n", num2);
-        return;
+        printf("Step1ResponseFromBytes: Invalid vector constructor number %i\n", num2);
     }
 
-    num3 = (data[idx++] << 0) |
-        (data[idx++] << 8) |
-        (data[idx++] << 16) |
-        (data[idx++] << 24);
+    int num3 = PacketReadUint32(packet);
+    ByteArrayList list = CreateByteArrayList(num3);
 
-    fingerPrint = new char* [num3];
     for (int i = 0; i < num3; i++)
     {
-        fingerPrint[i] = new char[8];
-        for (int j = 0; j < 8; j++)
-        {
-            fingerPrint[i][j] = data[idx++];
-        }
+        ByteArray item = PacketReadArray(packet, 8);
+        list.arr[i] = item;
     }
 
     ClearPacket(packet);
+    ClearStep1Request(request); 
+
+    Step1Response response{};
+   
+    response.Pq = pq;
+    response.Nonce = nonce;
+    response.Fingerprints = list;
+    response.ServerNonce = serverNonce;
+
+    return response;
 }

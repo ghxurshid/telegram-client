@@ -15,6 +15,22 @@ void ClearByteArray(ByteArray& obj)
 	if (obj.data != nullptr) delete[] obj.data;	
 }
 
+ByteArrayList CreateByteArrayList(uint16_t count)
+{
+	ByteArrayList list;
+	list.count = count;
+	list.arr = new ByteArray[count];
+	return list;
+}
+
+void ClearByteArrayList(ByteArrayList& obj)
+{
+	for (int i = 0; i < obj.count; i++) ClearByteArray(obj.arr[i]);
+	
+	obj.count = 0;
+	delete[] obj.arr;
+}
+
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2)
 {
 	uint16_t sum = arr1.size + arr2.size;

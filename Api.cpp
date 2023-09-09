@@ -3,7 +3,6 @@
 #include "Api.h"
 
 
-
 uint8_t Rand8()
 {
 	srand(time(0));

@@ -47,39 +47,12 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 }
 
 Step3Response DoAuthentication()
-{
-    {
-        Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); 
-        MtPlain_Send(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
-        Step1Response step1Res = Step1ResponseFromBytes(stp1ResPacket); 
-        
+{     
+    Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); 
+    MtPlain_Send(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
+    Step1Response step1Res = Step1ResponseFromBytes(stp1Req, stp1ResPacket); 
 
-    }
     
-    char* nonce;
-    char* servernonce;
-
-    int count = 0;
-    char* pqBytes;
-
-    uint32_t num3 = 0;
-    char** fingerPrint;
-
-    {
-        
-    }
-
-    {
-
-
-
-
-        delete[] nonce;
-        delete[] servernonce;
-        delete[] pqBytes;
-        for (int i = 0; i < num3; i++) delete[] fingerPrint[i];
-        delete[] fingerPrint;
-    }
 }
 
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])

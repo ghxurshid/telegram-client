@@ -16,8 +16,7 @@ struct Step1Response
 
     BigInteger Pq;
 
-    ByteArray** Fingerprints;
-     
+    ByteArrayList Fingerprints;     
 };
 
 Step1Request CreateStep1Request();
@@ -25,6 +24,6 @@ Step1Request CreateStep1Request();
 void ClearStep1Request(Step1Request& request); 
 void ClearStep1Response(Step1Response& response);
 
-int Step1RequestToBytes(Step1Request request, Packet& packet);
-Step1Response Step1ResponseFromBytes(Step1Request request, Packet& packet);
+int Step1RequestToBytes(Step1Request& request, Packet& packet);
+Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet);
 

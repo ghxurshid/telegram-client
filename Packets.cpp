@@ -1,4 +1,5 @@
 #include "Packets.h"
+#include "Utils.h"
 
 Packet CreatePacket(int bodySz)
 {
@@ -242,5 +243,18 @@ ByteArray PacketReadLongArray(Packet& packet)
 char* ReadBytesFromArray(char* buffer, int offset, int& count)
 {
     
+}
+
+bool CompareArray(ByteArray arr1, ByteArray arr2)
+{
+    if (arr1.size != arr2.size) return false;
+
+    for (int i = 0; i < arr1.size; i++)
+    {
+        if (arr1.data[i] != arr2.data[i])
+            return false;
+    }
+
+    return true;
 }
 
