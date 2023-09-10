@@ -4,14 +4,13 @@
 
 struct AuthKey
 {
-    uint8_t* key;
-
+    ByteArray key;
     uint64_t keyId;
-
     uint64_t auxHash;
 };
 
-AuthKey* CreateAuthKey(char* data);
+AuthKey CreateAuthKey(ByteArray data);
+void ClearAuthKey(AuthKey& obj);
 
 ByteArray CalcNewNonceHash(AuthKey* authKey, ByteArray newNonce, int number);
 

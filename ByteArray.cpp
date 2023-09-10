@@ -20,6 +20,7 @@ ByteArrayList CreateByteArrayList(uint16_t count)
 	ByteArrayList list;
 	list.count = count;
 	list.arr = new ByteArray[count];
+
 	return list;
 }
 
@@ -54,4 +55,17 @@ ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2)
 	ClearByteArray(arr2);
 
 	return newArr;
+}
+
+ByteArray ByteArrarClone(ByteArray arr)
+{
+	ByteArray clone = CreateByteArray(arr.size);
+	if (clone.size > 0)
+	{
+		for (int i = 0; i < clone.size; i++)
+		{
+			clone.data[i] = arr.data[i];
+		}
+	}
+	return clone;
 }

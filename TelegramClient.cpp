@@ -48,11 +48,17 @@ bool Connect(TelegramClient* client, bool reconnect = false)
 
 Step3Response DoAuthentication()
 {     
-    Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = CreatePacket(20); int ret = Step1RequestToBytes(stp1Req, stp1ReqPacket); 
+    Step1Request stp1Req = CreateStep1Request(); Packet stp1ReqPacket = Step1RequestToBytes(stp1Req); 
     MtPlain_Send(stp1ReqPacket); Packet stp1ResPacket = MtPlain_Receive();
     Step1Response step1Res = Step1ResponseFromBytes(stp1Req, stp1ResPacket); 
 
-    
+    Step2Request stp2Req = CreateStep2Request(); Packet stp2ReqPacket = Step2RequestToBytes(stp2Req, step1Res);
+    MtPlain_Send(stp2ReqPacket); Packet stp2ResPacket = MtPlain_Receive();
+    Step2Response step2Res = Step2ResponseFromBytes(stp2Req, stp2ResPacket);
+
+    Step3Request stp3Req = CreateStep3Request(); Packet stp3ReqPacket = Step3RequestToBytes(stp3Req, step2Res);
+    MtPlain_Send(stp3ReqPacket); Packet stp3ResPacket = MtPlain_Receive();
+    return Step3ResponseFromBytes(stp3Req, stp3ResPacket);    
 }
 
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])

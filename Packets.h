@@ -27,6 +27,8 @@ uint64_t PacketReadUint64(Packet& packet);
 ByteArray PacketReadArray(Packet& packet, int count);
 ByteArray PacketReadLongArray(Packet& packet);
 
+ByteArray PacketGetBuffer(Packet& packet);
+
  
 
 

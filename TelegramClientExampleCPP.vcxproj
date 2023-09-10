@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AES.cpp" />
     <ClCompile Include="Api.cpp" />
     <ClCompile Include="AuthKey.cpp" />
     <ClCompile Include="BigInteger.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="MtProtoPlainSender.cpp" />
     <ClCompile Include="MtProtoSender.cpp" />
     <ClCompile Include="Packets.cpp" />
+    <ClCompile Include="RSA.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="Step1.cpp" />
     <ClCompile Include="Step2.cpp" />
@@ -149,6 +151,7 @@
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AES.h" />
     <ClInclude Include="Api.h" />
     <ClInclude Include="AuthKey.h" />
     <ClInclude Include="BigInteger.h" />
@@ -158,6 +161,7 @@
     <ClInclude Include="MtProtoPlainSender.h" />
     <ClInclude Include="MtProtoSender.h" />
     <ClInclude Include="Packets.h" />
+    <ClInclude Include="RSA.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="Step1.h" />
     <ClInclude Include="Step2.h" />

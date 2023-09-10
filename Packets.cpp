@@ -240,6 +240,19 @@ ByteArray PacketReadLongArray(Packet& packet)
     return arr;     
 }
 
+ByteArray PacketGetBuffer(Packet& packet)
+{
+    ByteArray buff;
+
+    if (packet.body.size > 32)
+    {
+        buff.size = packet.bodySize;
+        buff.data = packet.body.data + 28;
+    }
+    
+    return buff;
+}
+
 char* ReadBytesFromArray(char* buffer, int offset, int& count)
 {
     
@@ -256,5 +269,18 @@ bool CompareArray(ByteArray arr1, ByteArray arr2)
     }
 
     return true;
+}
+
+void ReplaceByteArrayFromSign(ByteArray& arr)
+{
+    for (int i = 0; i < arr.size; i++)
+    {
+        if (arr.data[i] == '-')
+        {
+            for (int j = i; j < arr.size - 1; j++) arr.data[j] = arr.data[j + 1];
+            arr.size -= 1;
+            i--;
+        }
+    }
 }
 

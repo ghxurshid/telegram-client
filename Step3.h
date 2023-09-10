@@ -1,18 +1,27 @@
 #pragma once
+#include "Step2.h"
+#include "Packets.h"
+#include "AuthKey.h"
 #include "ByteArray.h"
+#include "BigInteger.h"
 
 struct Step3Request
 {
+    BigInteger _gab;
+    ByteArray newNonce;
+    int timeOffset;
 };
 
 struct Step3Response
 {
+    AuthKey AuthKey;
+    int TimeOffset;
 };
 
 Step3Request CreateStep3Request();
 
-void ClearStep3Request(Step3Request& request);
-void ClearStep3Response(Step3Response& responce);
+void ClearStep3Request(Step3Request& obj);
+void ClearStep3Response(Step3Response& obj);
 
-ByteArray Step3RequestToBytes(Step3Request request);
-Step3Response Step3ResponseFromBytes(ByteArray bytes);
+Packet Step3RequestToBytes(Step3Request& request, Step2Response& response);
+Step3Response Step3ResponseFromBytes(Step3Request& request, Packet& packet);

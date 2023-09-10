@@ -9,3 +9,13 @@ BigInteger CreateBigInteger(int sign, ByteArray bytes)
 void ClearBiInteger(BigInteger& bigInteger)
 {
 }
+
+ByteArray BI_ToByteArrayUnsigned(BigInteger bi)
+{
+    return ByteArray();
+}
+
+FactorizedPair Factorize(BigInteger pq)
+{
+    return FactorizedPair();
+}

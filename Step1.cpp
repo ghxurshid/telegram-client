@@ -29,15 +29,16 @@ void ClearStep1Response(Step1Response& response)
     ClearByteArrayList(response.Fingerprints);
 }
  
-int Step1RequestToBytes(Step1Request& request, Packet& packet)
+Packet Step1RequestToBytes(Step1Request& request)
 {
+    Packet packet = CreatePacket(20);
     int beginIndex = packet.currentIdx;
     uint32_t constructor = 1615239032;
 
     PacketWriteUint32(packet, constructor);
     PacketWriteArray(packet, request.nonce);
        
-    return packet.currentIdx - beginIndex;
+    return packet;
 }
 
 Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet)

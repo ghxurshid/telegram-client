@@ -21,3 +21,5 @@ void ClearByteArrayList(ByteArrayList& obj);
 
 ByteArray Add2ByteArray(ByteArray arr1, ByteArray arr2);
 
+ByteArray ByteArrarClone(ByteArray arr);
+
