@@ -5,12 +5,12 @@
 struct AuthKey
 {
     ByteArray key;
-    uint64_t keyId;
-    uint64_t auxHash;
+    uint64_t  keyId = 0;
+    uint64_t  auxHash = 0;
 };
 
-AuthKey CreateAuthKey(ByteArray data);
-void ClearAuthKey(AuthKey& obj);
+AuthKey* CreateAuthKey(ByteArray data);
+void ClearAuthKey(AuthKey* obj);
 
 ByteArray CalcNewNonceHash(AuthKey* authKey, ByteArray newNonce, int number);
 

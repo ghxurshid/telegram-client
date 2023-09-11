@@ -22,39 +22,39 @@ Session* FromBytes(ByteArray buffer)
     return nullptr;
 }
 
-void Save(Session* session)
+void Save(Session& session)
 {
     FILE* fp;
     int ret = fopen_s(&fp, "session.dat", "wb");
-    if (fp == nullptr || session == nullptr) return;
+    if (fp == nullptr) return;
 
-    fwrite((void*)session->Id, sizeof(uint64_t), 1, fp);
-    fwrite((void*)session->Sequence, sizeof(uint32_t), 1, fp);
-    fwrite((void*)session->Salt, sizeof(uint64_t), 1, fp);
-    fwrite((void*)session->LastMessageId, sizeof(uint64_t), 1, fp);
-    fwrite((void*)session->TimeOffset, sizeof(uint32_t), 1, fp);
-    WriteBytes((char*)ConnectionAddress, sizeof(ConnectionAddress), fp);
-    fwrite((void*)ConnectionPort, sizeof(uint32_t), 1, fp);
+    fwrite((void*)session.Id, sizeof(uint64_t), 1, fp);
+    fwrite((void*)session.Sequence, sizeof(uint32_t), 1, fp);
+    fwrite((void*)session.Salt, sizeof(uint64_t), 1, fp);
+    fwrite((void*)session.LastMessageId, sizeof(uint64_t), 1, fp);
+    fwrite((void*)session.TimeOffset, sizeof(uint32_t), 1, fp);
+    /*WriteBytes((char*)ConnectionAddress, sizeof(ConnectionAddress), fp);
+    fwrite((void*)ConnectionPort, sizeof(uint32_t), 1, fp);*/
 
-    if (session->User != nullptr)
+    if (session.User != nullptr)
     {
         fwrite((void*)1, sizeof(uint32_t), 1, fp); 
-        fwrite((void*)session->SessionExpires, sizeof(uint32_t), 1, fp); 
-        UserWriteBytes(session->User, fp);
+        fwrite((void*)session.SessionExpires, sizeof(uint32_t), 1, fp); 
+        UserWriteBytes(session.User, fp);
     }
     else
     {
         fwrite((void*)0, sizeof(uint8_t), 1, fp);
     }
 
-    WriteBytes((char*)(session->authKey->key), sizeof(session->authKey->key), fp);     
+    WriteBytes((char*)(session.authKey->key), sizeof(session.authKey->key), fp);     
 }
 
-Session* Load()
+Session Load()
 {
     FILE* fp;
     int ret = fopen_s(&fp, "session.dat", "rb");
-    if (fp == nullptr) return nullptr;
+    if (fp == nullptr) return Session();
 
     rewind(fp);
     uint64_t id = 0;            fread(&id, sizeof(uint64_t), 1, fp);
@@ -62,8 +62,8 @@ Session* Load()
     uint64_t salt = 0;          fread(&salt, sizeof(uint64_t), 1, fp);
     int64_t lastMessageId = 0;  fread(&lastMessageId, sizeof(int64_t), 1, fp);
     uint32_t timeOffset = 0;    fread(&timeOffset, sizeof(uint32_t), 1, fp);    
-    char* address =             ReadBytes(fp);
-    uint32_t port;              fread(&port, sizeof(uint32_t), 1, fp);
+    /*char* address =             ReadBytes(fp);
+    uint32_t port = 0;          fread(&port, sizeof(uint32_t), 1, fp);*/
     uint32_t flagBuff;          fread(&flagBuff, sizeof(uint32_t), 1, fp);
 
     bool flag = (flagBuff == 1 ? true : false);
@@ -78,29 +78,31 @@ Session* Load()
 
     char* data = ReadBytes(fp);    
 
-    Session* session = CreateSession();      
-    session->authKey = CreateAuthKey(data);
-    session->Id = id;
-    session->Salt = salt;
-    session->Sequence = sequence;
-    session->LastMessageId = lastMessageId;
-    session->TimeOffset = timeOffset;
-    session->SessionExpires = sessionExpires;
-    session->User = tLUser;
-    session->SessionUserId = (char*)"session";
+    Session session;      
+    session.authKey = CreateAuthKey(data);
+    session.Id = id;
+    session.Salt = salt;
+    session.Sequence = sequence;
+    session.LastMessageId = lastMessageId;
+    session.TimeOffset = timeOffset;
+    session.SessionExpires = sessionExpires;
+    session.User = tLUser;
+    session.SessionUserId = CreateByteArray(8);        
+    session.SessionUserId.data = (uint8_t*)"session";
     
     return session;
 }
 
-Session* TryLoadOrCreateNew()
+Session TryLoadOrCreateNew()
 {
-    Session* session = Load();
+    Session session = Load();
 
-    if (session == nullptr)
+    if (session.authKey == nullptr)
     {
         session = CreateSession();
-        session->Id = GenerateRandomUlong();              
-        session->SessionUserId = (char*)"session";         
+        session.Id = GenerateRandomUlong();              
+        session.SessionUserId = CreateByteArray(8);
+        session.SessionUserId.data = (uint8_t*)"session";
     }
 
     return session;

@@ -4,24 +4,24 @@
 #include "TelegramClient.h"
 #include "MtProtoPlainSender.h"
  
-TelegramClient* CreateTelegramClient(uint32_t apiId, char* apiHash)
+TelegramClient CreateTelegramClient(uint32_t apiId, char* apiHash)
 {     
-    TelegramClient* client = new TelegramClient();
+    TelegramClient client;
     
-    client->apiId = apiId;
-    client->apiHash = apiHash;
-    client->session = TryLoadOrCreateNew();
+    client.apiId = apiId;
+    client.apiHash = apiHash;
+    client.session = TryLoadOrCreateNew();
 
     return client;
 }
 
-bool Connect(TelegramClient* client, bool reconnect = false)
+bool Connect(TelegramClient& client, bool reconnect = false)
 {
-	Session* session = client->session;	 
+	Session* session = client.session;	 
 
 	if (session->authKey == nullptr || reconnect)
 	{
-		 DoAuthentication();		 
+		 Step3Response response = DoAuthentication();		 
 	}
 	 
     /*TLRequestGetConfig* config = new TLRequestGetConfig();
@@ -58,7 +58,7 @@ Step3Response DoAuthentication()
 
     Step3Request stp3Req = CreateStep3Request(); Packet stp3ReqPacket = Step3RequestToBytes(stp3Req, step2Res);
     MtPlain_Send(stp3ReqPacket); Packet stp3ResPacket = MtPlain_Receive();
-    return Step3ResponseFromBytes(stp3Req, stp3ResPacket);    
+    return Step3ResponseFromBytes(stp3Req, stp3ResPacket);
 }
 
 char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])

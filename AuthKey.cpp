@@ -1,6 +1,6 @@
 #include "AuthKey.h"
 
-AuthKey CreateAuthKey(ByteArray data)
+AuthKey* CreateAuthKey(ByteArray data)
 {
     /*key = data;
     using SHA1 sHA = new SHA1Managed();
@@ -9,7 +9,7 @@ AuthKey CreateAuthKey(ByteArray data)
     auxHash = binaryReader.ReadUInt64();
     binaryReader.ReadBytes(4);
     keyId = binaryReader.ReadUInt64();*/
-    return AuthKey();
+    return new AuthKey();
 }
 
 void ClearAuthKey(AuthKey& obj)
