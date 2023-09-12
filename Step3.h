@@ -9,13 +9,13 @@ struct Step3Request
 {
     BigInteger _gab;
     ByteArray newNonce;
-    int timeOffset;
+    int timeOffset = 0;
 };
 
 struct Step3Response
 {
-    AuthKey AuthKey;
-    int TimeOffset;
+    AuthKey* AuthKey = nullptr;
+    int TimeOffset = 0;
 };
 
 Step3Request CreateStep3Request();

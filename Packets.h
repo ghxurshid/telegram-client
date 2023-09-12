@@ -3,8 +3,8 @@
 
 struct Packet
 {
-	int bodySize;
-	int currentIdx;	
+	int bodySize = 0;
+	int currentIdx = 0;	
 	ByteArray body;
 };
 

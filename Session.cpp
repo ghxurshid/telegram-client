@@ -4,12 +4,11 @@
 #include "Session.h"
 #include "Utils.h"
 
-const int   ConnectionPort    = 443;
-const char* ConnectionAddress = "149.154.175.100";
 
-Session* CreateSession()
+
+Session CreateSession()
 {
-    return new Session();
+    return Session();
 }
  
 ByteArray ToBytes(Session* session)
@@ -47,13 +46,13 @@ void Save(Session& session)
         fwrite((void*)0, sizeof(uint8_t), 1, fp);
     }
 
-    WriteBytes((char*)(session.authKey->key), sizeof(session.authKey->key), fp);     
+    WriteBytes((session.authKey->key), fp);     
 }
 
 Session Load()
 {
     FILE* fp;
-    int ret = fopen_s(&fp, "session.dat", "rb");
+    int ret = fopen_s(&fp, "session.dat", "wb+");
     if (fp == nullptr) return Session();
 
     rewind(fp);
@@ -64,7 +63,7 @@ Session Load()
     uint32_t timeOffset = 0;    fread(&timeOffset, sizeof(uint32_t), 1, fp);    
     /*char* address =             ReadBytes(fp);
     uint32_t port = 0;          fread(&port, sizeof(uint32_t), 1, fp);*/
-    uint32_t flagBuff;          fread(&flagBuff, sizeof(uint32_t), 1, fp);
+    uint32_t flagBuff = 0;      fread(&flagBuff, sizeof(uint32_t), 1, fp);
 
     bool flag = (flagBuff == 1 ? true : false);
     uint32_t sessionExpires = 0;
@@ -76,7 +75,7 @@ Session Load()
         tLUser = UserReadBytes(fp);
     }
 
-    char* data = ReadBytes(fp);    
+    ByteArray data = ReadBytes(fp);    
 
     Session session;      
     session.authKey = CreateAuthKey(data);
@@ -90,6 +89,7 @@ Session Load()
     session.SessionUserId = CreateByteArray(8);        
     session.SessionUserId.data = (uint8_t*)"session";
     
+    fclose(fp);
     return session;
 }
 

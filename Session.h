@@ -12,21 +12,21 @@ struct Session
 {
     ByteArray SessionUserId;
 
-    AuthKey* authKey;
+    AuthKey* authKey = nullptr;
 
-    uint64_t Id; //8 bayt
+    uint64_t Id = 0; //8 bayt
 
-    uint32_t Sequence; //4 bayt
+    uint32_t Sequence = 0; //4 bayt
 
-    uint64_t Salt; //8 bayt
+    uint64_t Salt = 0; //8 bayt
 
-    uint32_t TimeOffset; //4 bayt
+    uint32_t TimeOffset = 0; //4 bayt
 
-    uint64_t LastMessageId; //8 bayt
+    uint64_t LastMessageId = 0; //8 bayt
 
-    uint32_t SessionExpires; //4 bayt
+    uint32_t SessionExpires = 0; //4 bayt
 
-    TLUser* User;
+    TLUser* User = nullptr;
 };
 
 Session CreateSession();

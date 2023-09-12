@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "Utils.h"
-
-char* ReadBytes(FILE* fp)
+  
+ByteArray ReadBytes(FILE* fp)
 {
-    uint8_t b; fread(&b, sizeof(uint8_t), 1, fp);
+    uint8_t b = 0; fread(&b, sizeof(uint8_t), 1, fp);
 
-    int num;
-    int num2;
+    int num = 0;
+    int num2 = 0;
     if (b == 254)
     {
-        uint8_t b0; fread(&b0, sizeof(uint8_t), 1, fp);
-        uint8_t b1; fread(&b1, sizeof(uint8_t), 1, fp);
-        uint8_t b2; fread(&b2, sizeof(uint8_t), 1, fp);
+        uint8_t b0 = 0; fread(&b0, sizeof(uint8_t), 1, fp);
+        uint8_t b1 = 0; fread(&b1, sizeof(uint8_t), 1, fp);
+        uint8_t b2 = 0; fread(&b2, sizeof(uint8_t), 1, fp);
 
         num = b0 | b1 << 8 | b2 << 16;
         num2 = num % 4;
@@ -23,8 +23,8 @@ char* ReadBytes(FILE* fp)
         num2 = (num + 1) % 4;
     }
 
-    char* bytes = new char[num];
-    fread(bytes, sizeof(uint8_t), num, fp);
+    ByteArray bytes = CreateByteArray(num);
+    fread(bytes.data, sizeof(uint8_t), num, fp);
 
     if (num2 > 0)
     {
@@ -35,9 +35,13 @@ char* ReadBytes(FILE* fp)
     return bytes;
 }
 
-void WriteBytes(char* bytes, int count, FILE* fp)
+void WriteBytes(ByteArray data, FILE* fp)
 {
     int num;
+
+    int   count = data.size;
+    char* bytes = (char*)data.data;
+
     if (count < 254)
     {
         num = (count + 1) % 4;

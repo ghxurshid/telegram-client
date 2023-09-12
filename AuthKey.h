@@ -12,5 +12,5 @@ struct AuthKey
 AuthKey* CreateAuthKey(ByteArray data);
 void ClearAuthKey(AuthKey* obj);
 
-ByteArray CalcNewNonceHash(AuthKey* authKey, ByteArray newNonce, int number);
+ByteArray CalcNewNonceHash(AuthKey& authKey, ByteArray newNonce, int number);
 

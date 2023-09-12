@@ -13,13 +13,15 @@ uint32_t main()
     setlocale(LC_ALL, "Russian");
 
     uint32_t apiId = 22236638;
-    char* apiHash = (char*)"fdf44e15f78621fe8d76caefac19761a";
+    ByteArray apiHash = CreateByteArray(32);
+    apiHash.data = (uint8_t*)"fdf44e15f78621fe8d76caefac19761a";
     
     // Номер телефона пользователя
-    char* phoneNum = (char*)"+998998346521";
+    ByteArray phoneNum = CreateByteArray(13);
+    phoneNum.data = (uint8_t*)"+998998346521";
 
     // Создаем экземпляр Telegram клиента с заданным API ID и API Hash
-    TelegramClient* client = CreateTelegramClient(apiId, apiHash);
+    TelegramClient client = CreateTelegramClient(apiId, apiHash);
     // Устанавливаем соединение с Telegram сервером
     Connect(client, false);
 
@@ -32,17 +34,17 @@ uint32_t main()
         printf("Файл авторизации не существует :(\n");
  
         // Отправляем запрос на отправку кода аутентификации на указанный номер телефона
-        char* hash = SendCodeRequest(client, phoneNum);
+        ByteArray hash = SendCodeRequest(client, phoneNum);
         printf("Введите код из SMS:\n");
-        char* code = new char[6];
-        uint32_t ret = scanf_s(code);
+        ByteArray code = CreateByteArray(6); 
+        uint32_t ret = scanf_s((char*)code.data);
 
         // Пытаемся авторизовать пользователя с полученным кодом
         TLUser* user = MakeAuth(client, phoneNum, hash, code);
 
         if (user != nullptr)
         {
-            printf("Пользователь %s авторизован", user->FirstName);
+            printf("Пользователь %s авторизован\n", user->FirstName.data);
         } 
     }
     else
@@ -53,7 +55,7 @@ uint32_t main()
     // Получаем список контактов пользователя
     TLContacts contacts = GetContacts(client);
     uint32_t contactCount = contacts.size;
-    printf("У вас %i контактов", contactCount);    
+    printf("У вас %i контактов\n", contactCount);    
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -97,5 +97,5 @@ Step2Response Step2ResponseFromBytes(Step2Request& request, Packet& packet)
         }
     }
 
-    return response
+    return response;
 }

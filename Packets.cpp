@@ -7,6 +7,7 @@ Packet CreatePacket(int bodySz)
     packet.currentIdx = 28;
     packet.bodySize = bodySz;    
     if (bodySz > 0) packet.body = CreateByteArray(bodySz + 32);
+   
 
     return packet;
 }
@@ -255,7 +256,7 @@ ByteArray PacketGetBuffer(Packet& packet)
 
 char* ReadBytesFromArray(char* buffer, int offset, int& count)
 {
-    
+    return nullptr;
 }
 
 bool CompareArray(ByteArray arr1, ByteArray arr2)

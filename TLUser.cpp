@@ -1,18 +1,18 @@
 #include <stdio.h>
-#include "TLUser.h"
 #include "Utils.h"
+#include "TLUser.h"
 
 void UserWriteBytes(TLUser* user, FILE* fp)
 {
 	if (user == nullptr)
 	{
-		printf("UserWriteBytes: user is null!");
+		printf("UserWriteBytes: user is null!\n");
 		return;
 	}
 
     if (fp == nullptr)
     {
-        printf("UserWriteBytes: fp is null!");
+        printf("UserWriteBytes: fp is null!\n");
         return;
     }
 
@@ -28,22 +28,22 @@ void UserWriteBytes(TLUser* user, FILE* fp)
 
     if ((user->Flags & 2u) != 0)
     {
-        WriteBytes(user->FirstName, sizeof(user->FirstName), fp);
+        WriteBytes(user->FirstName, fp);
     }
 
     if ((user->Flags & 4u) != 0)
     { 
-        WriteBytes(user->LastName, sizeof(user->LastName), fp);
+        WriteBytes(user->LastName, fp);
     }
 
     if ((user->Flags & 8u) != 0)
     {
-        WriteBytes(user->Username, sizeof(user->Username), fp);
+        WriteBytes(user->Username, fp);
     }
 
     if ((user->Flags & 0x10u) != 0)
     { 
-        WriteBytes(user->Phone, sizeof(user->Phone), fp);
+        WriteBytes(user->Phone, fp);
     }
 
     if ((user->Flags & 0x20u) != 0)
@@ -63,17 +63,17 @@ void UserWriteBytes(TLUser* user, FILE* fp)
 
     if ((user->Flags & 0x40000u) != 0)
     {
-        WriteBytes(user->RestrictionReason, sizeof(user->RestrictionReason), fp); 
+        WriteBytes(user->RestrictionReason, fp); 
     }
 
     if ((user->Flags & 0x80000u) != 0)
     { 
-        WriteBytes(user->BotInlinePlaceholder, sizeof(user->BotInlinePlaceholder), fp);
+        WriteBytes(user->BotInlinePlaceholder, fp);
     }
 
     if ((user->Flags & 0x400000u) != 0)
     { 
-        WriteBytes(user->LangCode, sizeof(user->LangCode), fp);
+        WriteBytes(user->LangCode, fp);
     }
 }
 
@@ -81,7 +81,7 @@ TLUser* UserReadBytes(FILE* fp)
 {
     if (fp == nullptr)
     {
-        printf("UserReadBytes: fp is null!");
+        printf("UserReadBytes: fp is null!\n");
         return nullptr;
     }
 
@@ -114,47 +114,27 @@ TLUser* UserReadBytes(FILE* fp)
     {
         user->FirstName = ReadBytes(fp);// StringUtil.Deserialize(br);
     }
-    else
-    {
-        user->FirstName = nullptr;
-    }
-
+     
     if ((user->Flags & 4u) != 0)
     {
         user->LastName = ReadBytes(fp);
     }
-    else
-    {
-        user->LastName = nullptr;
-    }
-
+      
     if ((user->Flags & 8u) != 0)
     {
         user->Username = ReadBytes(fp);
     }
-    else
-    {
-        user->Username = nullptr;
-    }
-
+      
     if ((user->Flags & 0x10u) != 0)
     {
         user->Phone = ReadBytes(fp);
-    }
-    else
-    {
-        user->Phone = nullptr;
-    }
+    }    
 
     if ((user->Flags & 0x20u) != 0)
     {
         user->Photo = new TLAbsUserProfilePhoto();
         fread(&(user->Photo->Constructor), sizeof(uint32_t), 1, fp);         
-    }
-    else
-    {
-        user->Photo = nullptr;
-    }
+    }     
 
     if ((user->Flags & 0x40u) != 0)
     {  
@@ -178,29 +158,17 @@ TLUser* UserReadBytes(FILE* fp)
     if ((user->Flags & 0x40000u) != 0)
     {
         user->RestrictionReason = ReadBytes(fp);
-    }
-    else
-    {
-        user->RestrictionReason = nullptr;
-    }
+    }    
 
     if ((user->Flags & 0x80000u) != 0)
     {
         user->BotInlinePlaceholder = ReadBytes(fp);
-    }
-    else
-    {
-        user->BotInlinePlaceholder = nullptr;
-    }
+    }     
 
     if ((user->Flags & 0x400000u) != 0)
     {
         user->LangCode = ReadBytes(fp);
-    }
-    else
-    {
-        user->LangCode = nullptr;
-    }
+    } 
 }
 
 void ComputeFlags(TLUser* user)
@@ -218,14 +186,14 @@ void ComputeFlags(TLUser* user)
     user->Flags = (user->Min ? (user->Flags | 0x100000) : (user->Flags & -1048577));
     user->Flags = (user->BotInlineGeo ? (user->Flags | 0x200000) : (user->Flags & -2097153));
     user->Flags = (user->AccessHash > 0 ? (user->Flags | 1) : (user->Flags & -2));
-    user->Flags = ((user->FirstName != nullptr) ? (user->Flags | 2) : (user->Flags & -3));
-    user->Flags = ((user->LastName != nullptr) ? (user->Flags | 4) : (user->Flags & -5));
-    user->Flags = ((user->Username != nullptr) ? (user->Flags | 8) : (user->Flags & -9));
-    user->Flags = ((user->Phone != nullptr) ? (user->Flags | 0x10) : (user->Flags & -17));
+    user->Flags = ((user->FirstName.size > 0) ? (user->Flags | 2) : (user->Flags & -3));
+    user->Flags = ((user->LastName.size > 0) ? (user->Flags | 4) : (user->Flags & -5));
+    user->Flags = ((user->Username.size > 0) ? (user->Flags | 8) : (user->Flags & -9));
+    user->Flags = ((user->Phone.size > 0) ? (user->Flags | 0x10) : (user->Flags & -17));
     user->Flags = ((user->Photo != nullptr) ? (user->Flags | 0x20) : (user->Flags & -33));
     user->Flags = ((user->Status != nullptr) ? (user->Flags | 0x40) : (user->Flags & -65));
     user->Flags = (user->BotInfoVersion > 0 ? (user->Flags | 0x4000) : (user->Flags & -16385));
-    user->Flags = ((user->RestrictionReason != nullptr) ? (user->Flags | 0x40000) : (user->Flags & -262145));
-    user->Flags = ((user->BotInlinePlaceholder != nullptr) ? (user->Flags | 0x80000) : (user->Flags & -524289));
-    user->Flags = ((user->LangCode != nullptr) ? (user->Flags | 0x400000) : (user->Flags & -4194305));
+    user->Flags = ((user->RestrictionReason.size > 0) ? (user->Flags | 0x40000) : (user->Flags & -262145));
+    user->Flags = ((user->BotInlinePlaceholder.size > 0) ? (user->Flags | 0x80000) : (user->Flags & -524289));
+    user->Flags = ((user->LangCode.size > 0) ? (user->Flags | 0x400000) : (user->Flags & -4194305));
 }

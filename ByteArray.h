@@ -3,14 +3,14 @@
 
 struct ByteArray
 {
-	uint16_t size;
-	uint8_t* data;
+	uint16_t size = 0;
+	uint8_t* data = nullptr;
 };
 
 struct ByteArrayList
 {
-	uint16_t count;
-	ByteArray* arr;
+	uint16_t count = 0;
+	ByteArray* arr = nullptr;
 };
 
 ByteArray CreateByteArray(uint16_t size);

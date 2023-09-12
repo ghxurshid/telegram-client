@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdio.h>
+#include "ByteArray.h"
 
 struct TLAbsUserProfilePhoto
 {
@@ -15,36 +16,35 @@ struct TLAbsUserStatus
 struct TLUser
 {
     int32_t Constructor = 773059779;
+    uint32_t Flags = 0;
 
-    uint32_t Flags;
+    bool Self = false;
+    bool Contact = false;
+    bool MutualContact = false;
+    bool Deleted = false;
+    bool Bot = false;
+    bool BotChatHistory = false;
+    bool BotNochats = false;
+    bool Verified = false;
+    bool Restricted = false;
+    bool Min = false;
+    bool BotInlineGeo = false;
 
-    bool Self;
-    bool Contact;
-    bool MutualContact;
-    bool Deleted;
-    bool Bot;
-    bool BotChatHistory;
-    bool BotNochats;
-    bool Verified;
-    bool Restricted;
-    bool Min;
-    bool BotInlineGeo;
+    uint32_t Id = 0;
+    uint64_t AccessHash = 0;
 
-    uint32_t Id;
-    uint64_t AccessHash;
+    ByteArray FirstName;
+    ByteArray LastName;
+    ByteArray Username;
+    ByteArray Phone;
 
-    char* FirstName;
-    char* LastName;
-    char* Username;
-    char* Phone;
+    TLAbsUserProfilePhoto* Photo = nullptr;
+    TLAbsUserStatus* Status = nullptr;
 
-    TLAbsUserProfilePhoto* Photo;
-    TLAbsUserStatus* Status;
-
-    uint32_t BotInfoVersion;
-    char* RestrictionReason;
-    char* BotInlinePlaceholder;
-    char* LangCode;
+    uint32_t  BotInfoVersion = 0;
+    ByteArray RestrictionReason;
+    ByteArray BotInlinePlaceholder;
+    ByteArray LangCode;
 };
 
 void UserWriteBytes(TLUser* user, FILE* fp);

@@ -2,6 +2,7 @@
 
 AuthKey* CreateAuthKey(ByteArray data)
 {
+    if (data.size == 0) return nullptr;
     /*key = data;
     using SHA1 sHA = new SHA1Managed();
     using MemoryStream input = new MemoryStream(sHA.ComputeHash(key), writable: false);
@@ -9,12 +10,13 @@ AuthKey* CreateAuthKey(ByteArray data)
     auxHash = binaryReader.ReadUInt64();
     binaryReader.ReadBytes(4);
     keyId = binaryReader.ReadUInt64();*/
+
     return new AuthKey();
 }
 
-void ClearAuthKey(AuthKey& obj)
+void ClearAuthKey(AuthKey* obj)
 {
-    ClearByteArray(obj.key);
+    ClearByteArray(obj->key);
 }
 
 ByteArray CalcNewNonceHash(AuthKey& authKey, ByteArray newNonce, int number)

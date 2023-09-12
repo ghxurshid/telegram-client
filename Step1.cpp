@@ -81,9 +81,7 @@ Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet)
 
     ClearPacket(packet);
     ClearStep1Request(request); 
-
-    Step1Response response{};
-   
+ 
     response.Pq = pq;
     response.Nonce = nonce;
     response.Fingerprints = list;

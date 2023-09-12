@@ -1,8 +1,10 @@
 #pragma once
 #include <stdio.h>
+#include "ByteArray.h"
 
-char* ReadBytes(FILE* fp);
-void  WriteBytes(char* bytes, int count, FILE* fp);
+ByteArray ReadBytes(FILE* fp);
+
+void  WriteBytes(ByteArray data, FILE* fp);
 
 char* ReadBytesFromArray(char* bytes, int offset, int& count);
 

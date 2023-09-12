@@ -4,7 +4,7 @@
 #include "TelegramClient.h"
 #include "MtProtoPlainSender.h"
  
-TelegramClient CreateTelegramClient(uint32_t apiId, char* apiHash)
+TelegramClient CreateTelegramClient(uint32_t apiId, ByteArray apiHash)
 {     
     TelegramClient client;
     
@@ -17,11 +17,13 @@ TelegramClient CreateTelegramClient(uint32_t apiId, char* apiHash)
 
 bool Connect(TelegramClient& client, bool reconnect = false)
 {
-	Session* session = client.session;	 
+	Session& session = client.session;	 
 
-	if (session->authKey == nullptr || reconnect)
+	if (session.authKey == nullptr || reconnect)
 	{
-		 Step3Response response = DoAuthentication();		 
+		 Step3Response response = DoAuthentication();
+         session.authKey = response.AuthKey;
+         session.TimeOffset = response.TimeOffset;
 	}
 	 
     /*TLRequestGetConfig* config = new TLRequestGetConfig();
@@ -61,31 +63,28 @@ Step3Response DoAuthentication()
     return Step3ResponseFromBytes(stp3Req, stp3ResPacket);
 }
 
-char* SendCodeRequest(TelegramClient* client, char phoneNumber[12])
+ByteArray SendCodeRequest(TelegramClient& client, ByteArray phoneNumber)
 {
-    return new char[1];//TODO
+    return ByteArray();//TODO
 }
 
-TLUser* MakeAuth(TelegramClient* client, char phoneNumber[12], char* hash, char* code)
+TLUser* MakeAuth(TelegramClient& client, ByteArray phoneNumber, ByteArray hash, ByteArray code)
 {
     return new TLUser();
 }
 
-TLContacts GetContacts(TelegramClient* client)
+TLContacts GetContacts(TelegramClient& client)
 {
     return CreateContacts(5);
 }
 
-void ReadFromChat(TelegramClient* client)
+void ReadFromChat(TelegramClient& client)
 {
 
 }
 
-bool IsUserAuthorized(TelegramClient* client)
+bool IsUserAuthorized(TelegramClient& client)
 {
-    if (client == nullptr || 
-        client->session == nullptr ||
-        client->session->User == nullptr) return false;
-     
+    if (client.session.User == nullptr) return false;     
     return true;
 }

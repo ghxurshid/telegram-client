@@ -17,7 +17,7 @@ void ClearStep3Response(Step3Response& obj)
     ClearAuthKey(obj.AuthKey);
 }
 
-ByteArray Step3RequestToBytes(Step3Request& request, Step2Response& response)
+Packet Step3RequestToBytes(Step3Request& request, Step2Response& response)
 {
     request.newNonce = ByteArrarClone(response.NewNonce);
     /*AESKeyData key = AES.GenerateKeyDataFromNonces(serverNonce, newNonce);
@@ -82,7 +82,7 @@ ByteArray Step3RequestToBytes(Step3Request& request, Step2Response& response)
     binaryWriter3.Write(serverNonce);
     Serializers.Bytes.Write(binaryWriter3, data);
     return memoryStream3.ToArray();*/
-    return ByteArray();
+    return Packet();
 }
 
 Step3Response Step3ResponseFromBytes(Step3Request& request, Packet& packet)

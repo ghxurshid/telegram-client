@@ -13,16 +13,16 @@
 //#pragma comment (lib, "AdvApi32.lib")
 
 #pragma comment(lib, "ws2_32.lib")
+
+const int   ConnectionPort = 443;
+const char* ConnectionAddress = "149.154.175.100";
   
 WSADATA wsData;
 SOCKET  sock;
 
 // Server/receiver address
 SOCKADDR_IN ServerAddr, ThisSenderInfo;
-
-// Server/receiver port to connect to
-uint32_t Port = 7171;
-
+ 
 uint32_t RetCode;
 uint32_t sendCount = 0;
 
@@ -38,7 +38,7 @@ void TcpConnect()
 
     // Initialize Winsock version 2.2
     if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
-        std::cerr << "Failed to initialize Winsock." << std::endl;
+        printf("Failed to initialize Winsock.\n");
         return;
     }
 
@@ -65,12 +65,12 @@ void TcpConnect()
     // Server information
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(12345);  // Server port
+    serverAddr.sin_port = htons(ConnectionPort);  // Server port
     //serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Server IP address
-    inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);
+    inet_pton(AF_INET, ConnectionAddress, &serverAddr.sin_addr);
 
     if (connect(sock, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR) {
-        printf("Failed to connect to the server.");
+        printf("Failed to connect to the server.\n");
         closesocket(sock);
         WSACleanup();
         return;
@@ -152,7 +152,7 @@ void TcpSend(Packet packet)
     BytesSent = send(sock, (const char*)data, size, 0);
   
     if (BytesSent == SOCKET_ERROR) printf("TcpSend: send() error %ld.\n", WSAGetLastError());
-    else { printf("TcpSend: %i bayts have sended.", BytesSent); sendCount++; }
+    else { printf("TcpSend: %i bayts have sended.\n", BytesSent); sendCount++; }
 }
 
 Packet TcpReceive()
@@ -164,7 +164,7 @@ Packet TcpReceive()
     if (count != sizeof(uint32_t))
     {
         printf("TcpReceive: count of readed bytes is not equal to sizeof(uint32_t)\n");
-        return CreatePacket(0);// CreateByteArray(0);;
+        return CreatePacket(0);
     }
     
     if (size <= 32 || size > 0X00100000)

@@ -1,7 +1,7 @@
 #pragma once
 struct BigInteger
 {
-    int sign;
+    int sign = 0;
 
     int magnitude[8];
 

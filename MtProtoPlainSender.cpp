@@ -13,7 +13,7 @@ void MtPlain_Send(Packet packet)
 
 	if (size < 32)
 	{
-		printf("MtPlain_Send: data size is less than 32");
+		printf("MtPlain_Send: data size is less than 32\n");
 		return;
 	}
 
