@@ -2,7 +2,7 @@
 
 uint32_t hash;
 uint32_t seed;
-uint8_t  table[256];
+uint32_t  table[256];
 ByteArray HashValue;
 uint32_t polynomial;
 bool initialized = false;

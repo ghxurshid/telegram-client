@@ -229,8 +229,7 @@ ByteArray PacketReadLongArray(Packet& packet)
         num2 = (num + 1) % 4;
     }
 
-    ByteArray arr = PacketReadArray(packet, num);
-     
+    ByteArray arr = PacketReadArray(packet, num);     
 
     if (num2 > 0)
     {

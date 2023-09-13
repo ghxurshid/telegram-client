@@ -10,7 +10,7 @@ void MtPlain_Send(Packet packet)
 {
 	int size = packet.body.size;
 	uint8_t* data = packet.body.data;
-
+	
 	if (size < 32)
 	{
 		printf("MtPlain_Send: data size is less than 32\n");
@@ -33,7 +33,7 @@ void MtPlain_Send(Packet packet)
 	
 	for (int i = 0; i < 4; i++)
 	{
-		data[idx++] = (size >> (i * 8)) & 0xFF;
+		data[idx++] = (packet.bodySize >> (i * 8)) & 0xFF;
 	}
  
 	TcpSend(packet);

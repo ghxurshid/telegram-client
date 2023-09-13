@@ -10,7 +10,7 @@ Step1Request CreateStep1Request()
 
     for (int i = 0; i < 16; i++)
     {
-        request.nonce.data[i] = Rand8();
+        request.nonce.data[i] = i;// Rand8();
     }
 
     return request;

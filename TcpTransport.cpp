@@ -129,7 +129,7 @@ void TcpSend(Packet packet)
     uint8_t* data = packet.body.data;
 
     int idx = 0;
-    int lenth12 = size + 12;
+    int lenth12 = packet.bodySize + 20 + 12;
 
     for (int i = 0; i < 4; i++)
     {
@@ -148,7 +148,11 @@ void TcpSend(Packet packet)
     {
         data[idx++] = (crc >> (i * 8)) & 0xFF;
     }     
- 
+    for (int i = 0; i < 52; i++)
+    {
+        printf("%i ", data[i]);
+        if (i == 51) printf("\n");
+    }
     BytesSent = send(sock, (const char*)data, size, 0);
   
     if (BytesSent == SOCKET_ERROR) printf("TcpSend: send() error %ld.\n", WSAGetLastError());
@@ -158,8 +162,7 @@ void TcpSend(Packet packet)
 Packet TcpReceive()
 {
     uint32_t size = 0;
-    int count = recv(sock, (char*)size, sizeof(uint32_t), 0);
-  
+    int count = recv(sock, (char*)size, sizeof(uint32_t), 0);  
 
     if (count != sizeof(uint32_t))
     {
@@ -174,7 +177,6 @@ Packet TcpReceive()
     }
 
     Packet recvData = CreatePacket(size - 32); //Tcp socketdan o`qilishi kerak bo`lgan hamma bayt uchun joy ajratildi
-
 
     int size2 = recvData.body.size;
     uint8_t* data = recvData.body.data;

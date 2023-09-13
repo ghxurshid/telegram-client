@@ -10,7 +10,7 @@ Step2Request CreateStep2Request()
 
     for (int i = 0; i < 32; i++)
     {
-        request.newNonce.data[i] = Rand8();
+        request.newNonce.data[i] = i;// Rand8();
     }
 
     return request;

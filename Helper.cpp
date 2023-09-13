@@ -5,6 +5,7 @@
 
 uint64_t GetNewMessageId(uint32_t timeOffset, uint64_t& lastMessageId)
 {
+	return 0x58EDC52187458C75; //TODO
 	uint64_t num = std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::system_clock::now().time_since_epoch()
 	).count();
