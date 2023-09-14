@@ -27,7 +27,7 @@ uint32_t RetCode;
 uint32_t sendCount = 0;
 
 // Be careful with the array bound, provide some checking mechanism...
-char sendbuf[1024] = "This is a test string from sender";
+char sendbuf[1024] = "";
 uint32_t BytesSent, nlen;
 
 bool connected = false;
@@ -42,7 +42,7 @@ void TcpConnect()
         return;
     }
 
-    printf("Client: Winsock DLL status is %s.\n", wsData.szSystemStatus);
+    //printf("Client: Winsock DLL status is %s.\n", wsData.szSystemStatus);
 
     // Create a new socket to make a client connection.
     // AF_INET = 2, The Internet Protocol version 4 (IPv4) address family, TCP protocol
@@ -59,8 +59,8 @@ void TcpConnect()
         // Exit with error
         return;
     }
-    else
-        printf("Client: socket() is OK!\n");
+    /*else
+        printf("Client: socket() is OK!\n");*/
 
     // Server information
     sockaddr_in serverAddr{};
@@ -147,22 +147,26 @@ void TcpSend(Packet packet)
     for (int i = 0; i < 4; i++)
     {
         data[idx++] = (crc >> (i * 8)) & 0xFF;
-    }     
+    }  
+
+    printf("Bytes to send: ");
     for (int i = 0; i < 52; i++)
     {
         printf("%i ", data[i]);
         if (i == 51) printf("\n");
     }
+    printf("\n");
+
     BytesSent = send(sock, (const char*)data, size, 0);
   
     if (BytesSent == SOCKET_ERROR) printf("TcpSend: send() error %ld.\n", WSAGetLastError());
-    else { printf("TcpSend: %i bayts have sended.\n", BytesSent); sendCount++; }
+    //else { printf("TcpSend: %i bayts have sended.\n", BytesSent); sendCount++; } 
 }
 
 Packet TcpReceive()
 {
     uint32_t size = 0;
-    int count = recv(sock, (char*)size, sizeof(uint32_t), 0);  
+    int count = recv(sock, (char*)&size, sizeof(uint32_t), 0);  
 
     if (count != sizeof(uint32_t))
     {
