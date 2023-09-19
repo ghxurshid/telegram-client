@@ -144,9 +144,94 @@ void ClearBiInteger(BigInteger& bigInteger)
 {
 }
 
+int GetByteLength(int nBits)
+{
+    return (nBits + BitsPerByte - 1) / BitsPerByte;
+}
+
+ByteArray ToByteArray(BigInteger bi, bool _unsigned = false)
+{
+    if (bi.sign == 0)
+        return _unsigned ? CreateByteArray(0) : CreateByteArray(1);
+
+    int nBits = (_unsigned && bi.sign > 0)
+        ? bi.nBitLength
+        : bi.nBitLength + 1;
+
+    int nBytes = GetByteLength(nBits);
+    ByteArray bytes = CreateByteArray(nBytes);
+     
+
+    int magIndex = bi.magLen;
+    int bytesIndex = bytes.size;
+
+    if (bi.sign > 0)
+    {
+        while (magIndex > 1)
+        {
+            uint32_t mag = (uint32_t)bi.magnitude[--magIndex];
+            bytes.data[--bytesIndex] = (uint8_t)mag;
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 8);
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 16);
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 24);
+        }
+
+        uint32_t lastMag = (uint32_t)bi.magnitude[0];
+        while (lastMag > 255)
+        {
+            bytes.data[--bytesIndex] = (uint8_t)lastMag;
+            lastMag >>= 8;
+        }
+
+        bytes.data[--bytesIndex] = (uint8_t)lastMag;
+    }
+    else // sign < 0
+    {
+        bool carry = true;
+
+        while (magIndex > 1)
+        {
+            uint32_t mag = ~((uint32_t)bi.magnitude[--magIndex]);
+
+            if (carry)
+            {
+                carry = (++mag == 0);
+            }
+
+            bytes.data[--bytesIndex] = (uint8_t)mag;
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 8);
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 16);
+            bytes.data[--bytesIndex] = (uint8_t)(mag >> 24);
+        }
+
+        uint32_t lastMag = (uint32_t)bi.magnitude[0];
+
+        if (carry)
+        {
+            // Never wraps because magnitude[0] != 0
+            --lastMag;
+        }
+
+        while (lastMag > 255)
+        {
+            bytes.data[--bytesIndex] = (uint8_t)~lastMag;
+            lastMag >>= 8;
+        }
+
+        bytes.data[--bytesIndex] = (uint8_t)~lastMag;
+
+        if (bytesIndex > 0)
+        {
+            bytes.data[--bytesIndex] = 255;
+        }
+    }
+
+    return bytes;
+}
+
 ByteArray BI_ToByteArrayUnsigned(BigInteger bi)
 {
-    return ByteArray();
+    return ToByteArray(bi, true);
 }
  
 int* MakeMagnitude(ByteArray bytes, int& magLen, int offset, int length)

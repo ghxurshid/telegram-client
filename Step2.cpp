@@ -34,7 +34,7 @@ Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
 { 
     Packet packet = CreatePacket(255);
     FactorizedPair factorizedPair = Factorize(response.Pq); //TODO realize Factorize
-     
+ 
     PacketWriteUint32(packet, 2211011308u);
     PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(response.Pq)); 
     PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(factorizedPair.p));
