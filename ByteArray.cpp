@@ -19,14 +19,13 @@ ByteArrayList CreateByteArrayList(uint16_t count)
 {
 	ByteArrayList list;
 	list.count = count;
-	list.arr = new ByteArray[count];
-
+	list.arr = new ByteArray*[count];
 	return list;
 }
 
 void ClearByteArrayList(ByteArrayList& obj)
 {
-	for (int i = 0; i < obj.count; i++) ClearByteArray(obj.arr[i]);
+	for (int i = 0; i < obj.count; i++) ClearByteArray((*obj.arr[i]));
 	
 	obj.count = 0;
 	delete[] obj.arr;

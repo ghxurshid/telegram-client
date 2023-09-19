@@ -2,7 +2,6 @@
 #include <ctime>
 #include "Api.h"
 
-
 uint8_t Rand8()
 {
 	srand(time(0));
@@ -11,7 +10,7 @@ uint8_t Rand8()
 
 uint16_t Rand16()
 {
-	return (uint16_t)(rand() % 256 * 256);
+	return (uint16_t)(rand() % (256 * 256));
 }
 
 uint32_t Rand32()

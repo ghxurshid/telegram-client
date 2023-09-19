@@ -10,7 +10,7 @@ struct ByteArray
 struct ByteArrayList
 {
 	uint16_t count = 0;
-	ByteArray* arr = nullptr;
+	ByteArray** arr = nullptr;
 };
 
 ByteArray CreateByteArray(uint16_t size);

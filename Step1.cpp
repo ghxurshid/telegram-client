@@ -62,7 +62,7 @@ Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet)
     ByteArray serverNonce = PacketReadArray(packet, 16);
     ByteArray bytes       = PacketReadLongArray(packet);
 
-    BigInteger pq = CreateBigInteger(1, bytes);
+    BigInteger pq = CreateBIFromBytes(1, bytes);
     uint32_t num2 = PacketReadUint32(packet);
 
     if (num2 != 481674261)
@@ -70,13 +70,16 @@ Step1Response Step1ResponseFromBytes(Step1Request& request, Packet& packet)
         printf("Step1ResponseFromBytes: Invalid vector constructor number %i\n", num2);
     }
 
-    int num3 = PacketReadUint32(packet);
-    ByteArrayList list = CreateByteArrayList(num3);
+    int fingerPrintCount = PacketReadUint32(packet);
+    ByteArrayList list = CreateByteArrayList(fingerPrintCount);
 
-    for (int i = 0; i < num3; i++)
+    for (int i = 0; i < fingerPrintCount; i++)
     {
         ByteArray item = PacketReadArray(packet, 8);
-        list.arr[i] = item;
+
+        list.arr[i] = new ByteArray();
+        list.arr[i]->size = item.size;
+        list.arr[i]->data = item.data;
     }
 
     ClearPacket(packet);

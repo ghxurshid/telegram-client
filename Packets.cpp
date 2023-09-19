@@ -204,12 +204,25 @@ uint64_t PacketReadUint64(Packet& packet)
 
 ByteArray PacketReadArray(Packet& packet, int count)
 {
-    return ByteArray();
+    int size = packet.body.size;
+    int indx = packet.currentIdx;
+    
+    if (indx + count >= size) return ByteArray();
+
+    ByteArray arr = CreateByteArray(count);
+    
+    for (int i = 0; i < count; i++)
+    {
+        arr.data[i] = packet.body.data[indx + i];
+    }
+
+    packet.currentIdx += count;
+    
+    return arr;
 }
 
 ByteArray PacketReadLongArray(Packet& packet)
-{
-    
+{    
     uint8_t b = PacketReadUint8(packet);
 
     int num;

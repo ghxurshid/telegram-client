@@ -134,6 +134,7 @@
     <ClCompile Include="ByteArray.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CRC.cpp" />
+    <ClCompile Include="Factorizator.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="MtProtoPlainSender.cpp" />
     <ClCompile Include="MtProtoSender.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="ByteArray.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="CRC.h" />
+    <ClInclude Include="Factorizator.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="MtProtoPlainSender.h" />
     <ClInclude Include="MtProtoSender.h" />

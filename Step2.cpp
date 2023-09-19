@@ -2,6 +2,7 @@
 #include "RSA.h"
 #include "Utils.h"
 #include "Step2.h"
+#include "Factorizator.h"
 
 Step2Request CreateStep2Request()
 {
@@ -47,8 +48,8 @@ Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
 
     for(int i = 0; i < response.Fingerprints.count; i ++)
     {         
-        ReplaceByteArrayFromSign(response.Fingerprints.arr[i]);
-        ByteArray key = response.Fingerprints.arr[i];
+        ReplaceByteArrayFromSign(*response.Fingerprints.arr[i]);
+        ByteArray key = *response.Fingerprints.arr[i];
         array = RSA_Encrypt(key, PacketGetBuffer(packet));
 
         if (array.size > 0)

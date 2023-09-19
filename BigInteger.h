@@ -1,9 +1,12 @@
 #pragma once
+#include "ByteArray.h"
+
 struct BigInteger
 {
     int sign = 0;
 
-    int magnitude[8];
+    int magLen = 0;
+    int* magnitude;
 
     int nBits = -1;
 
@@ -11,16 +14,10 @@ struct BigInteger
 
     long mQuote = -1L;
 };
-
-struct FactorizedPair
-{
-	BigInteger p;
-	BigInteger q;
-};
-
-BigInteger CreateBigInteger(int sign, ByteArray bytes);
+ 
+BigInteger CreateBIFromBytes(int sign, ByteArray bytes);
+BigInteger CreateBIFromLong(int64_t value);
 void ClearBiInteger(BigInteger& bigInteger);
-
-ByteArray BI_ToByteArrayUnsigned(BigInteger bi);
-
-FactorizedPair Factorize(BigInteger pq);
+ByteArray BI_ToByteArrayUnsigned(BigInteger bi); 
+int* MakeMagnitude(ByteArray bytes, int& magLen, int offset, int length);
+int64_t LongValue(BigInteger bi);
