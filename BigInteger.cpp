@@ -312,3 +312,44 @@ int64_t LongValue(BigInteger bi)
 
     return bi.sign < 0 ? -v : v;     
 }
+
+int CompareNoLeadingZeroes(int xIndx, BigInteger x, int yIndx, BigInteger y)
+{
+    int diff = (x.magLen - y.magLen) - (xIndx - yIndx);
+
+    if (diff != 0)
+    {
+        return diff < 0 ? -1 : 1;
+    }
+
+    // lengths of magnitudes the same, test the magnitude values
+
+    while (xIndx < x.magLen)
+    {
+        uint32_t v1 = (uint32_t)x.magnitude[xIndx++];
+        uint32_t v2 = (uint32_t)y.magnitude[yIndx++];
+
+        if (v1 != v2)
+            return v1 < v2 ? -1 : 1;
+    }
+
+    return 0;
+}
+
+int CompareTo(BigInteger bi1, BigInteger bi2)
+{
+    return bi1.sign < bi2.sign ? -1
+        : bi1.sign > bi2.sign ? 1
+        : bi1.sign == 0 ? 0
+        : bi1.sign * CompareNoLeadingZeroes(0, bi1, 0, bi2);
+}
+
+BigInteger BI_Min(BigInteger bi1, BigInteger bi2)
+{
+    return CompareTo(bi1, bi2) < 0 ? bi1 : bi2;    
+}
+
+BigInteger BI_Max(BigInteger bi1, BigInteger bi2)
+{
+    return CompareTo(bi1, bi2) > 0 ? bi1 : bi2;
+}

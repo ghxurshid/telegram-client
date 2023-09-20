@@ -12,7 +12,7 @@ struct BigInteger
 
     int nBitLength = -1;
 
-    long mQuote = -1L;
+    int64_t mQuote = -1L;
 };
  
 BigInteger CreateBIFromBytes(int sign, ByteArray bytes);
@@ -21,3 +21,6 @@ void ClearBiInteger(BigInteger& bigInteger);
 ByteArray BI_ToByteArrayUnsigned(BigInteger bi); 
 int* MakeMagnitude(ByteArray bytes, int& magLen, int offset, int length);
 int64_t LongValue(BigInteger bi);
+
+BigInteger BI_Min(BigInteger bi1, BigInteger bi2);
+BigInteger BI_Max(BigInteger bi1, BigInteger bi2);

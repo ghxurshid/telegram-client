@@ -33,12 +33,12 @@ void ClearStep2Response(Step2Response& response)
 Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
 { 
     Packet packet = CreatePacket(255);
-    FactorizedPair factorizedPair = Factorize(response.Pq); //TODO realize Factorize
+    FactorizedPair pair = Factorize(response.Pq); //TODO realize Factorize
  
     PacketWriteUint32(packet, 2211011308u);
     PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(response.Pq)); 
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(factorizedPair.p));
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(factorizedPair.q));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.p));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.q));
     PacketWriteArray(packet, response.Nonce);
     PacketWriteArray(packet, response.ServerNonce);
     PacketWriteArray(packet, request.newNonce);
@@ -70,8 +70,8 @@ Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
     PacketWriteUint32(packet, 3608339646u);
     PacketWriteArray(packet, response.Nonce);
     PacketWriteArray(packet, response.ServerNonce); 
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(factorizedPair.p));
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(factorizedPair.q));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.p));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.q));
     PacketWriteArray(packet, buffer);
     PacketWriteLongArray(packet, array);
      
