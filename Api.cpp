@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <ctime>
+#include <ctime>
+#include <random>
+#include <chrono> 
 #include "Api.h"
 
 uint8_t Rand8()
@@ -21,4 +24,11 @@ uint32_t Rand32()
 uint64_t Rand64()
 {
 	return ((uint64_t)rand() | (uint64_t)rand() << 32);
+}
+
+uint64_t millis()
+{
+	return std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch()
+	).count();
 }

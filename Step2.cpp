@@ -37,31 +37,31 @@ Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
  
     PacketWriteUint32(packet, 2211011308u);
     PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(response.Pq)); 
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.p));
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.q));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(BI_Min(pair.p, pair.q)));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(BI_Max(pair.p, pair.q)));
     PacketWriteArray(packet, response.Nonce);
     PacketWriteArray(packet, response.ServerNonce);
     PacketWriteArray(packet, request.newNonce);
     
-    ByteArray array{};
-    ByteArray buffer{};
+    ByteArray ciphertext{};
+    ByteArray targetFingerPrint{};
 
     for(int i = 0; i < response.Fingerprints.count; i ++)
     {         
         ReplaceByteArrayFromSign(*response.Fingerprints.arr[i]);
         ByteArray key = *response.Fingerprints.arr[i];
-        array = RSA_Encrypt(key, PacketGetBuffer(packet));
+        ciphertext = RSA_Encrypt(key, PacketGetBuffer(packet));
 
-        if (array.size > 0)
+        if (ciphertext.size > 0)
         {
-            buffer = key;
+            targetFingerPrint = key;
             break;
         }         
     }
 
     ClearPacket(packet);
 
-    if (array.size == 0)
+    if (ciphertext.size == 0)
     {
         printf("Step2RequestToBytes: not found valid key for fingerprints\n");
     }
@@ -70,10 +70,10 @@ Packet Step2RequestToBytes(Step2Request& request, Step1Response& response)
     PacketWriteUint32(packet, 3608339646u);
     PacketWriteArray(packet, response.Nonce);
     PacketWriteArray(packet, response.ServerNonce); 
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.p));
-    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(pair.q));
-    PacketWriteArray(packet, buffer);
-    PacketWriteLongArray(packet, array);
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(BI_Min(pair.p, pair.q)));
+    PacketWriteLongArray(packet, BI_ToByteArrayUnsigned(BI_Max(pair.p, pair.q)));
+    PacketWriteArray(packet, targetFingerPrint);
+    PacketWriteLongArray(packet, ciphertext);
      
     return packet;
 }

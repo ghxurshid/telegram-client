@@ -140,6 +140,38 @@ BigInteger CreateBIFromLong(int64_t value)
     return BigInteger();
 }
 
+BigInteger CreateBIFromRand(int sizeInBits)
+{
+    if (sizeInBits < 0)
+    {
+        printf("sizeInBits must be non-negative\n");
+        return BigInteger();
+    }
+    
+    BigInteger bi;
+
+    bi.nBits = -1;
+    bi.nBitLength = -1;
+
+    if (sizeInBits == 0)
+    {
+        //				this.sign = 0;
+        bi.magnitude = ZeroMagnitude;
+        return;
+    }
+
+    int nBytes = GetByteLength(sizeInBits);
+    byte[] b = new byte[nBytes];
+    random.NextBytes(b);
+
+    // strip off any excess bits in the MSB
+    b[0] &= rndMask[BitsPerByte * nBytes - sizeInBits];
+
+    this.magnitude = MakeMagnitude(b, 0, b.Length);
+    this.sign = this.magnitude.Length < 1 ? 0 : 1;
+    return BigInteger();
+}
+
 void ClearBiInteger(BigInteger& bigInteger)
 {
 }

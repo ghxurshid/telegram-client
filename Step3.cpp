@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include "Api.h"
+#include "AES.h"
+#include "Utils.h"
 #include "Step3.h"
 
 Step3Request CreateStep3Request()
@@ -20,39 +24,47 @@ void ClearStep3Response(Step3Response& obj)
 Packet Step3RequestToBytes(Step3Request& request, Step2Response& response)
 {
     request.newNonce = ByteArrarClone(response.NewNonce);
-    /*AESKeyData key = AES.GenerateKeyDataFromNonces(serverNonce, newNonce);
-    byte[] buffer = AES.DecryptAES(key, encryptedAnswer);
-    int num2;
-    BigInteger m;
-    BigInteger bigInteger;
-    using (MemoryStream input = new MemoryStream(buffer))
+    AESKeyData key = AES_GenerateKeyDataFromNonces(response.ServerNonce, response.NewNonce);
+    ByteArray plaintextAnswer = AES_Decrypt(key, response.EncryptedAnswer);
+    int g;
+    BigInteger dhPrime;
+    BigInteger ga;
+     
+    Packet packet;
+    packet.currentIdx = 0;
+    packet.bodySize = plaintextAnswer.size;
+    packet.body = plaintextAnswer;
+
+    ByteArray hashsum = PacketReadArray(packet, 20);     
+   
+    uint32_t code = PacketReadUint32(packet);
+    if (code != 3045658042u)
     {
-        using BinaryReader binaryReader = new BinaryReader(input);
-        byte[] array = binaryReader.ReadBytes(20);
-        uint num = binaryReader.ReadUInt32();
-        if (num != 3045658042u)
-        {
-            throw new InvalidOperationException($"invalid dh_inner_data code: {num}");
-        }
-
-        byte[] first = binaryReader.ReadBytes(16);
-        if (!first.SequenceEqual(nonce))
-        {
-            throw new InvalidOperationException("invalid nonce in encrypted answer");
-        }
-
-        byte[] first2 = binaryReader.ReadBytes(16);
-        if (!first2.SequenceEqual(serverNonce))
-        {
-            throw new InvalidOperationException("invalid server nonce in encrypted answer");
-        }
-
-        num2 = binaryReader.ReadInt32();
-        m = new BigInteger(1, Serializers.Bytes.Read(binaryReader));
-        bigInteger = new BigInteger(1, Serializers.Bytes.Read(binaryReader));
-        int num3 = binaryReader.ReadInt32();
-        timeOffset = num3 - (int)(Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds) / 1000);
+       printf("invalid dh_inner_data code: {%i}\n", code);
+       return Packet();
     }
+
+    ByteArray nonce = PacketReadArray(packet, 16);
+     
+    if (!CompareArray(nonce, response.Nonce))
+    {
+        printf("invalid nonce in encrypted answer\n");
+        return Packet();
+    }
+
+    ByteArray serverNonce = PacketReadArray(packet, 16);
+ 
+    if (!CompareArray(serverNonce, response.ServerNonce))
+    {
+        printf("invalid server nonce in encrypted answer\n");
+    }
+
+    g = PacketReadUint32(packet);
+    dhPrime = CreateBIFromBytes(1, PacketReadLongArray(packet));
+    ga = CreateBIFromBytes(1, PacketReadLongArray(packet));
+    int serverTime = PacketReadUint32(packet);
+
+    request.timeOffset = serverTime - (int)(millis() / 1000);     
 
     BigInteger exponent = new BigInteger(2048, new Random());
     BigInteger bigInteger2 = BigInteger.ValueOf(num2).ModPow(exponent, m);

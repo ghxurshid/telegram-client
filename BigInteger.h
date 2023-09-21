@@ -14,9 +14,11 @@ struct BigInteger
 
     int64_t mQuote = -1L;
 };
- 
-BigInteger CreateBIFromBytes(int sign, ByteArray bytes);
+
 BigInteger CreateBIFromLong(int64_t value);
+BigInteger CreateBIFromRand(int sizeInBits);
+BigInteger CreateBIFromBytes(int sign, ByteArray bytes);
+
 void ClearBiInteger(BigInteger& bigInteger);
 ByteArray BI_ToByteArrayUnsigned(BigInteger bi); 
 int* MakeMagnitude(ByteArray bytes, int& magLen, int offset, int length);
