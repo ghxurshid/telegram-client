@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h> 
 #include "ByteArray.h"
+#include "BigInteger.h"
 
 struct AuthKey
 {
@@ -9,7 +10,7 @@ struct AuthKey
     uint64_t  auxHash = 0;
 };
 
-AuthKey* CreateAuthKey(ByteArray data);
+AuthKey* CreateAuthKey(BigInteger gab);
 void ClearAuthKey(AuthKey* obj);
 
 ByteArray CalcNewNonceHash(AuthKey& authKey, ByteArray newNonce, int number);

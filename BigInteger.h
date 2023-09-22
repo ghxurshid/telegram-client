@@ -26,3 +26,5 @@ int64_t LongValue(BigInteger bi);
 
 BigInteger BI_Min(BigInteger bi1, BigInteger bi2);
 BigInteger BI_Max(BigInteger bi1, BigInteger bi2);
+
+BigInteger BI_ModPow(BigInteger bi, BigInteger& exponent, BigInteger& m);

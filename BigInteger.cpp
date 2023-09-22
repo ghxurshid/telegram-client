@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "Api.h"
 #include "ByteArray.h"
 #include "BigInteger.h"
 
@@ -140,6 +141,8 @@ BigInteger CreateBIFromLong(int64_t value)
     return BigInteger();
 }
 
+static uint8_t rndMask[] = {255, 127, 63, 31, 15, 7, 3, 1};
+
 BigInteger CreateBIFromRand(int sizeInBits)
 {
     if (sizeInBits < 0)
@@ -156,19 +159,22 @@ BigInteger CreateBIFromRand(int sizeInBits)
     if (sizeInBits == 0)
     {
         //				this.sign = 0;
-        bi.magnitude = ZeroMagnitude;
-        return;
+        bi.magnitude = (int*)ZeroMagnitude;
+        return bi;
     }
 
     int nBytes = GetByteLength(sizeInBits);
-    byte[] b = new byte[nBytes];
-    random.NextBytes(b);
+    ByteArray b = CreateByteArray(nBytes);
+    for (int i = 0; i < nBytes; i++)
+    {
+        b.data[i] = Rand8();
+    }   
 
     // strip off any excess bits in the MSB
-    b[0] &= rndMask[BitsPerByte * nBytes - sizeInBits];
+    b.data[0] &= rndMask[BitsPerByte * nBytes - sizeInBits];
 
-    this.magnitude = MakeMagnitude(b, 0, b.Length);
-    this.sign = this.magnitude.Length < 1 ? 0 : 1;
+    bi.magnitude = MakeMagnitude(b, bi.magLen, 0, nBytes);
+    bi.sign = bi.magLen < 1 ? 0 : 1;
     return BigInteger();
 }
 
@@ -384,4 +390,9 @@ BigInteger BI_Min(BigInteger bi1, BigInteger bi2)
 BigInteger BI_Max(BigInteger bi1, BigInteger bi2)
 {
     return CompareTo(bi1, bi2) > 0 ? bi1 : bi2;
+}
+
+BigInteger BI_ModPow(BigInteger bi, BigInteger& exponent, BigInteger& m)
+{
+    return BigInteger(); //TODO
 }

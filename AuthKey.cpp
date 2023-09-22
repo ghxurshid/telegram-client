@@ -1,8 +1,7 @@
 #include "AuthKey.h"
 
-AuthKey* CreateAuthKey(ByteArray data)
-{
-    if (data.size == 0) return nullptr;
+AuthKey* CreateAuthKey(BigInteger gab)
+{  
     /*key = data;
     using SHA1 sHA = new SHA1Managed();
     using MemoryStream input = new MemoryStream(sHA.ComputeHash(key), writable: false);
