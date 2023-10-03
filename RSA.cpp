@@ -5,7 +5,9 @@
 
 RSAServerKey CreateRSAServerKey()
 {
-
+    RSAServerKey serverkey;
+    serverkey.fingerprint;
+    serverkey.e.sign 
 }
  
 ByteArray RSA_Encrypt(ByteArray key, ByteArray data)
