@@ -1,3 +1,4 @@
+#include "Api.h"
 #include "RSA.h"
 #include "SHA1.h"
 #include "ByteArray.h"
@@ -6,49 +7,47 @@ RSAServerKey CreateRSAServerKey()
 {
 
 }
-
-ByteArray Encrypt()
-
+ 
 ByteArray RSA_Encrypt(ByteArray key, ByteArray data)
 {
     static RSAServerKey serverKey = CreateRSAServerKey();
+  
+    ByteArray buffer = CreateByteArray(255);       
+    ByteArray hashsum = SHA1_ComputeHash(data, 0, data.size);
 
-    /*using (MemoryStream buffer = new MemoryStream(255))
-        using (BinaryWriter writer = new BinaryWriter(buffer))*/
-
-    ByteArray buffer = CreateByteArray(255);
-
-     
-    ByteArray hashsum = SHA1_ComputeHash(data, offset, length);
-    writer.Write(hashsum);
-     
-
-    buffer.Write(data, offset, length);
-    if (length < 235)
+    int idx = 0;
+    for (int i = 0; i < hashsum.size; i++)
     {
-        byte[] padding = new byte[235 - length];
-        new Random().NextBytes(padding);
-        buffer.Write(padding, 0, padding.Length);
+        buffer.data[idx++] = hashsum.data[i];
+    }
+        
+    for (int i = 0; i < data.size; i++)
+    {
+        buffer.data[idx++] = data.data[i];
     }
 
-    byte[] ciphertext = new BigInteger(1, buffer.ToArray()).ModPow(e, m).ToByteArrayUnsigned();
+    while (idx < 255)
+    {
+        buffer.data[idx++] = Rand8();
+    }
+      
+    BigInteger bi = CreateBIFromBytes(1, buffer);
+    BigInteger bi_pow = BI_ModPow(bi, serverKey.e, serverKey.m);
 
-    if (ciphertext.Length == 256)
+    ByteArray ciphertext = BI_ToByteArrayUnsigned(bi_pow);
+
+    if (ciphertext.size == 256)
     {
         return ciphertext;
     }
     else {
-        byte[] paddedCiphertext = new byte[256];
-        int padding = 256 - ciphertext.Length;
-        for (int i = 0; i < padding; i++)
+        ByteArray paddedCiphertext = CreateByteArray(256);
+         
+        for (int i = 0; i < 256; i++)
         {
-            paddedCiphertext[i] = 0;
+            paddedCiphertext.data[i] = i < ciphertext.size ? ciphertext.data[i] : 0;
         }
-        ciphertext.CopyTo(paddedCiphertext, padding);
+        ClearByteArray(ciphertext);
         return paddedCiphertext;
-    }
-    
-
-    return ByteArray();
-
+    }   
 }
